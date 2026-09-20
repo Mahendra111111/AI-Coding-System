@@ -4,6 +4,8 @@ projects/*/temp/
 projects/*/cache/
 temp-smoke-workspace/
 tools/venvs/
+providers/skills/
+providers/refs/
 *.log
 .DS_Store
 Thumbs.db
