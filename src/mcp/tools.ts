@@ -10,6 +10,7 @@ import {
   isGraphifyAvailable,
 } from "../graph/graphify.js";
 import { formatGitSummary, getGitSummary } from "../git/summary.js";
+import { prepareContext } from "../orchestrator/prepareContext.js";
 import {
   listProjects,
   registerProject,
@@ -103,6 +104,26 @@ export function createServer(): McpServer {
       });
       return textResult(built.context);
     },
+  );
+
+  server.tool(
+    "prepare_context",
+    "Assemble task-scoped context in priority order. Optionally includes selective memory and Graphify relationships; never dumps repositories, full memory, or full OWASP references.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+      task: z.string().min(1).describe("Current task and acceptance criteria"),
+      includeMemory: z.boolean().optional().default(false),
+      includeGraph: z.boolean().optional().default(false),
+    },
+    async ({ workspacePath, task, includeMemory, includeGraph }) =>
+      textResult(
+        await prepareContext(config, {
+          workspacePath,
+          task,
+          includeMemory: includeMemory ?? false,
+          includeGraph: includeGraph ?? false,
+        }),
+      ),
   );
 
   server.tool(
