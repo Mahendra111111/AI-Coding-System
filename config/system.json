@@ -8,6 +8,39 @@
     "enabled": true,
     "preferCodeOnly": true
   },
+  "memory": {
+    "enabled": true,
+    "provider": "claude-mem"
+  },
+  "ponytail": {
+    "enabled": true
+  },
+  "caveman": {
+    "enabled": false
+  },
+  "contextMode": {
+    "enabled": true
+  },
+  "review": {
+    "openCodeReview": {
+      "enabled": true
+    }
+  },
+  "security": {
+    "semgrep": {
+      "enabled": true
+    },
+    "codeql": {
+      "enabled": false
+    },
+    "bearer": {
+      "enabled": false
+    },
+    "defaultPolicy": "light"
+  },
+  "validation": {
+    "maxBuildAttempts": 3
+  },
   "telemetry": {
     "enabled": false
   }
