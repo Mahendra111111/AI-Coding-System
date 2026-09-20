@@ -4,6 +4,7 @@ import { join } from "node:path";
 import type { SystemConfig } from "./core/config.js";
 import { isGraphifyAvailable } from "./graph/graphify.js";
 import { projectsDir, registryPath, templatesDir } from "./core/paths.js";
+import { getAllProviderStatuses } from "./providers/status.js";
 
 export interface DoctorCheck {
   name: string;
@@ -83,9 +84,30 @@ export function runDoctor(config: SystemConfig): {
         : "disabled in config",
   });
 
-  // graphify optional: don't fail overall if missing
+  try {
+    const providerChecks = getAllProviderStatuses(config).map((provider) => ({
+      name: `provider:${provider.id}`,
+      ok:
+        !provider.enabledInConfig ||
+        (provider.available && !provider.detail.includes("overlap:")),
+      detail: provider.detail,
+    }));
+    checks.push(...providerChecks);
+  } catch (error) {
+    checks.push({
+      name: "provider_registry",
+      ok: false,
+      detail: `optional provider status unavailable: ${error instanceof Error ? error.message : String(error)}`,
+    });
+  }
+
+  // Optional providers, including graphify, don't fail overall health.
   const requiredFailed = checks.filter(
-    (c) => !c.ok && c.name !== "graphify",
+    (c) =>
+      !c.ok &&
+      c.name !== "graphify" &&
+      c.name !== "provider_registry" &&
+      !c.name.startsWith("provider:"),
   );
   const ok = requiredFailed.length === 0;
   const summary = checks

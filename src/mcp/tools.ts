@@ -20,6 +20,7 @@ import {
   updateHandoff,
   updateProjectState,
 } from "../project/state.js";
+import { getAllProviderStatuses } from "../providers/status.js";
 
 function textResult(text: string) {
   return { content: [{ type: "text" as const, text }] };
@@ -201,7 +202,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "doctor",
-    "Check AI Coding System health (Node, git, build, templates, optional Graphify).",
+    "Check AI Coding System health, including optional provider status.",
     {},
     async () => {
       const result = runDoctor(config);
@@ -209,6 +210,14 @@ export function createServer(): McpServer {
         `${result.ok ? "HEALTHY" : "ISSUES FOUND"}\n\n${result.summary}`,
       );
     },
+  );
+
+  server.tool(
+    "provider_status",
+    "Return configuration and local availability status for all optional providers.",
+    {},
+    async () =>
+      textResult(JSON.stringify(getAllProviderStatuses(config), null, 2)),
   );
 
   if (config.graphify.enabled) {
