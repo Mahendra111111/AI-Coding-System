@@ -23,6 +23,10 @@ import {
 import { getCavemanGuidance } from "../providers/caveman.js";
 import { securityRefs } from "../providers/owasp.js";
 import { getDisciplineRules } from "../providers/ponytail.js";
+import {
+  detectQualityStack,
+  runQualityCheck,
+} from "../providers/quality.js";
 import { getAllProviderStatuses } from "../providers/status.js";
 
 function textResult(text: string) {
@@ -235,6 +239,25 @@ export function createServer(): McpServer {
     "Return active compression guidance (context-mode vs caveman) and terse-output hints when caveman is enabled.",
     {},
     async () => textResult(getCavemanGuidance(config)),
+  );
+
+  server.tool(
+    "quality_detect",
+    "Detect Prettier, ESLint, and Biome configuration in a workspace. Reports formatter/linter and conflicts.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+    },
+    async ({ workspacePath }) =>
+      textResult(JSON.stringify(detectQualityStack(workspacePath), null, 2)),
+  );
+
+  server.tool(
+    "quality_check",
+    "Run non-conflicting quality tools detected in the workspace (Prettier/ESLint/Biome). Output truncated to 4k chars.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+    },
+    async ({ workspacePath }) => textResult(runQualityCheck(workspacePath)),
   );
 
   server.tool(
