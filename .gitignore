@@ -1,0 +1,11 @@
+node_modules/
+dist/
+projects/*/temp/
+projects/*/cache/
+temp-smoke-workspace/
+tools/venvs/
+*.log
+.DS_Store
+Thumbs.db
+.env
+.env.*

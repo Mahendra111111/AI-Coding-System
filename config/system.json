@@ -1,0 +1,14 @@
+{
+  "systemRoot": "C:\\AI-Coding-System",
+  "projectRoots": ["D:\\"],
+  "identity": {
+    "hashLength": 20
+  },
+  "graphify": {
+    "enabled": true,
+    "preferCodeOnly": true
+  },
+  "telemetry": {
+    "enabled": false
+  }
+}

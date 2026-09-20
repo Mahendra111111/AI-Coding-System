@@ -1,0 +1,14 @@
+---
+description: Use AI Coding System MCP for shared project context
+alwaysApply: true
+---
+
+# AI Coding System
+
+Before substantial coding in this workspace:
+
+1. Call MCP tool `get_project_context` (or `register_project`) with the workspace path.
+2. Follow constraints and handoff next actions.
+3. After meaningful completed work, call `update_handoff` with current task, completed items, files changed, remaining work, and any important decision.
+
+Do not ask the user to re-explain architecture already present in project context.
