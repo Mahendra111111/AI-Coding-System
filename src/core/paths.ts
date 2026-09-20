@@ -44,3 +44,19 @@ export function constraintsPath(config: SystemConfig, projectId: string): string
 export function architecturePath(config: SystemConfig, projectId: string): string {
   return join(contextDir(config, projectId), "ARCHITECTURE.md");
 }
+
+export function providersDir(config: SystemConfig): string {
+  return join(config.systemRoot, "providers");
+}
+
+export function reviewsDir(config: SystemConfig, projectId: string): string {
+  return join(projectDir(config, projectId), "reviews");
+}
+
+export function tempSessionDir(
+  config: SystemConfig,
+  projectId: string,
+  sessionId: string,
+): string {
+  return join(projectDir(config, projectId), "temp", sessionId);
+}
