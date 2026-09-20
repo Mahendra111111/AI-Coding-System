@@ -21,6 +21,7 @@ import {
   updateProjectState,
 } from "../project/state.js";
 import { getCavemanGuidance } from "../providers/caveman.js";
+import { memoryGet, memorySearch } from "../providers/claudeMem.js";
 import { runOpenCodeReview } from "../providers/openCodeReview.js";
 import { securityRefs } from "../providers/owasp.js";
 import { getDisciplineRules } from "../providers/ponytail.js";
@@ -226,6 +227,28 @@ export function createServer(): McpServer {
     {},
     async () =>
       textResult(JSON.stringify(getAllProviderStatuses(config), null, 2)),
+  );
+
+  server.tool(
+    "memory_search",
+    "Search the optional Claude-Mem index and return compact results with observation IDs. Claude-Mem is selective memory only; ACS remains the source of truth.",
+    {
+      query: z.string().min(1).describe("Memory search query"),
+      limit: z.number().int().min(1).max(100).optional().default(10),
+    },
+    async ({ query, limit }) =>
+      textResult(await memorySearch(config, query, limit ?? 10)),
+  );
+
+  server.tool(
+    "memory_get",
+    "Fetch full Claude-Mem details only for explicitly selected observation IDs.",
+    {
+      ids: z
+        .array(z.number().int().positive())
+        .describe("Claude-Mem observation IDs to retrieve"),
+    },
+    async ({ ids }) => textResult(await memoryGet(config, ids)),
   );
 
   server.tool(

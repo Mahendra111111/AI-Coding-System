@@ -24,7 +24,7 @@ are reported but do not fail the script, so it is safe to rerun.
 | Caveman | Output compression | Shallow-cloned to `providers/skills/caveman`. It is installed but config-disabled by default because ACS compression modes are mutually exclusive. |
 | OWASP Secure Coding Practices | Security reference | Shallow-cloned to `providers/refs/owasp-scp`. |
 | OWASP Top 10 | Security reference | Shallow-cloned to `providers/refs/owasp-top10`. |
-| Claude-Mem | Historical memory | Not installed automatically. Run `npx claude-mem install --provider host` when ready; the installer does not force cloud sign-in. |
+| Claude-Mem | Historical memory | Not installed automatically. Run `npx claude-mem install --provider host` when ready; the installer does not force cloud sign-in. ACS defaults to `http://127.0.0.1:37777`, but current Claude-Mem releases assign a per-user port (`37700 + uid % 100`) and store it in `~/.claude-mem/settings.json`; set `CLAUDE_MEM_WORKER_URL` to the active base URL when it differs. |
 | Semgrep | Fast security scanning | Installed with user-scoped `pip` unless already available or `-SkipHeavy` is set. Failure is non-fatal. |
 | CodeQL | Deep security analysis | Detection only. Install the [CodeQL CLI](https://docs.github.com/en/code-security/codeql-cli) manually when needed. |
 | Bearer | Data-flow security analysis | Detection only. Install the [Bearer CLI](https://docs.bearer.com/guides/installation/) manually when needed. |
