@@ -148,6 +148,19 @@ describe("finalizeTask", () => {
     expect(result).toContain("- [ ] Review");
   });
 
+  it("marks no-op quality output incomplete", () => {
+    mocks.runQualityCheck.mockReturnValue(
+      "No quality tools configured. Checked biome.json, .prettierrc*, eslint.config.*, and package.json deps/scripts.",
+    );
+
+    const result = finalizeTask(config(), {
+      workspacePath: "D:\\app",
+      qualityCheck: true,
+    });
+
+    expect(result).toContain("- [ ] Quality check");
+  });
+
   it("marks command error output incomplete", () => {
     mocks.runOpenCodeReview.mockReturnValue(
       "Review saved: review.json\n\nError: OCR exited with status 1",

@@ -35,7 +35,7 @@ function checklistItem(
 }
 
 function checkSucceeded(output: string): boolean {
-  return !/(?:\bfailed\b|\bfailure\b|\berror\b|\bskipped\b|\bmissing\b|\bnot (?:installed|configured|available)\b|\bunavailable\b|\binstall(?:ation)?(?:\s+hint)?\b|\bconflict\b|\brefused\b)/i.test(
+  return !/(?:\bfailed\b|\bfailure\b|\berror\b|\bskipped\b|\bmissing\b|\bnot (?:installed|configured|available)\b|\bunavailable\b|\binstall(?:ation)?(?:\s+hint)?\b|\bconflict\b|\brefused\b|\bno quality tools\b)/i.test(
     output,
   );
 }

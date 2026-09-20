@@ -5,7 +5,7 @@ alwaysApply: true
 
 # AI Coding System
 
-Connect **one** MCP server: `ai-coding-system` → `node C:\AI-Coding-System\dist\index.js`. Do not add upstream providers (Claude-Mem, Graphify, Ponytail, etc.) as separate MCP entries — ACS exposes them through facade tools.
+Connect **one** project-brain MCP server: `ai-coding-system` → `node C:\AI-Coding-System\dist\index.js`. Do not add Claude-Mem, Graphify, Ponytail, etc. as separate MCP entries — ACS exposes them through facade tools. **Exception:** Context Mode may optionally be a peer MCP for tool-output sandboxing until ACS proxies it.
 
 ## Session start
 

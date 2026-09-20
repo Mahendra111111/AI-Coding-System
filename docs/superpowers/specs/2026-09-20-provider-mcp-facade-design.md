@@ -96,7 +96,7 @@ C:\AI-Coding-System\
 
 ## 6. One MCP facade
 
-Editors configure **only** `ai-coding-system`. Upstream tools are not required as separate MCP entries for the agent to “get everything,” though Context Mode or Graphify may run as local processes that ACS shells/proxies to.
+Editors configure **only** `ai-coding-system` as the project-brain MCP (state, handoff, orchestrator). Graphify and Claude-Mem are invoked through ACS facade tools, not as separate MCP entries. **Context Mode** is the temporary exception: it may run as an optional **peer MCP** for tool-output sandboxing until ACS proxies it; Graphify/Claude-Mem do not get that exception.
 
 ### MCP tool groups (logical)
 

@@ -11,6 +11,8 @@ Date: 2026-09-20
 - `provider_status` catches registry failures and returns a JSON error object.
 - Added `"none"` and caveman-only compression-policy assertions.
 - `discipline_rules` now honors `ponytail.enabled`.
+- Editor docs and cursor rule clarify ACS as the one project-brain MCP while Context Mode may optionally be a peer MCP until proxied; Graphify/Claude-Mem stay on ACS facade tools.
+- `finalize_task` treats "No quality tools configured/detected" as incomplete checklist output, not success.
 
 ## Verification
 

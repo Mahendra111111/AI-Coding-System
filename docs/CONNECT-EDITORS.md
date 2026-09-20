@@ -4,7 +4,9 @@ Server entry (after `npm run build`):
 
 `C:\AI-Coding-System\dist\index.js`
 
-Editors configure **one MCP server** (`ai-coding-system`). Upstream tools (Claude-Mem, Graphify, Ponytail, OpenCodeReview, Semgrep, etc.) are **not** separate MCP entries — ACS invokes them through facade tools when you call orchestrated endpoints.
+Editors configure **one project-brain MCP server** (`ai-coding-system`) for state, handoff, and orchestration. Upstream tools (Claude-Mem, Graphify, Ponytail, OpenCodeReview, Semgrep, etc.) are **not** separate MCP entries — ACS invokes them through facade tools when you call orchestrated endpoints.
+
+**Temporary exception:** Context Mode may optionally be configured as a **peer MCP** for tool-output sandboxing until ACS proxies it. Graphify and Claude-Mem still go through ACS facade tools only.
 
 ## Cursor
 
@@ -69,7 +71,7 @@ Any editor that supports **MCP stdio servers** can use the same command/args. Pl
 | Implementation | `discipline_rules`, `security_refs`; targeted `quality_check` / `security_scan` / `review_diff` |
 | Task complete | `finalize_task` — git summary, optional checks, handoff update, session cleanup |
 
-Do **not** wire Claude-Mem, Graphify, or other providers as additional MCP servers. Do **not** call memory, graph, or scan tools on every turn.
+Do **not** wire Claude-Mem, Graphify, Ponytail, or other providers as additional MCP servers (Context Mode peer MCP is the sole exception above). Do **not** call memory, graph, or scan tools on every turn.
 
 ## Verify
 
