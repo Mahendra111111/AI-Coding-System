@@ -20,6 +20,8 @@ import {
   updateHandoff,
   updateProjectState,
 } from "../project/state.js";
+import { getCavemanGuidance } from "../providers/caveman.js";
+import { getDisciplineRules } from "../providers/ponytail.js";
 import { getAllProviderStatuses } from "../providers/status.js";
 
 function textResult(text: string) {
@@ -218,6 +220,20 @@ export function createServer(): McpServer {
     {},
     async () =>
       textResult(JSON.stringify(getAllProviderStatuses(config), null, 2)),
+  );
+
+  server.tool(
+    "discipline_rules",
+    "Return compact Ponytail YAGNI ladder and safety carve-outs for implementation discipline.",
+    {},
+    async () => textResult(getDisciplineRules(config)),
+  );
+
+  server.tool(
+    "compression_guidance",
+    "Return active compression guidance (context-mode vs caveman) and terse-output hints when caveman is enabled.",
+    {},
+    async () => textResult(getCavemanGuidance(config)),
   );
 
   if (config.graphify.enabled) {

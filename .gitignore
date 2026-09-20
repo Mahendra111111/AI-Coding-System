@@ -4,7 +4,8 @@ projects/*/temp/
 projects/*/cache/
 temp-smoke-workspace/
 tools/venvs/
-providers/skills/
+providers/skills/*
+!providers/skills/README.md
 providers/refs/
 *.log
 .DS_Store
