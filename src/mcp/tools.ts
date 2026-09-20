@@ -30,6 +30,7 @@ import {
   runQualityCheck,
 } from "../providers/quality.js";
 import { getAllProviderStatuses } from "../providers/status.js";
+import { runSecurityScan } from "../security/scan.js";
 
 function textResult(text: string) {
   return { content: [{ type: "text" as const, text }] };
@@ -339,6 +340,17 @@ export function createServer(): McpServer {
     },
     async ({ topic, maxChars }) =>
       textResult(securityRefs(config, topic, maxChars ?? 2000)),
+  );
+
+  server.tool(
+    "security_scan",
+    "Run the configured security scanners by policy. Light runs Semgrep; normal adds review guidance; deep also runs enabled CodeQL and Bearer. Findings are capped at 3k characters.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+      policy: z.enum(["light", "normal", "deep"]).optional(),
+    },
+    async ({ workspacePath, policy }) =>
+      textResult(runSecurityScan(config, { workspacePath, policy })),
   );
 
   if (config.graphify.enabled) {
