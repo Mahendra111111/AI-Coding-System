@@ -53,6 +53,18 @@ function makeSystem(root: string): SystemConfig {
         projectRoots: ["D:\\"],
         identity: { hashLength: 20 },
         graphify: { enabled: true, preferCodeOnly: true },
+        memory: { enabled: true, provider: "claude-mem" },
+        ponytail: { enabled: true },
+        caveman: { enabled: false },
+        contextMode: { enabled: true },
+        review: { openCodeReview: { enabled: true } },
+        security: {
+          semgrep: { enabled: true },
+          codeql: { enabled: false },
+          bearer: { enabled: false },
+          defaultPolicy: "light",
+        },
+        validation: { maxBuildAttempts: 3 },
         telemetry: { enabled: false },
       },
       null,
@@ -64,6 +76,18 @@ function makeSystem(root: string): SystemConfig {
     projectRoots: ["D:\\"],
     identity: { hashLength: 20 },
     graphify: { enabled: true, preferCodeOnly: true },
+    memory: { enabled: true, provider: "claude-mem" },
+    ponytail: { enabled: true },
+    caveman: { enabled: false },
+    contextMode: { enabled: true },
+    review: { openCodeReview: { enabled: true } },
+    security: {
+      semgrep: { enabled: true },
+      codeql: { enabled: false },
+      bearer: { enabled: false },
+      defaultPolicy: "light",
+    },
+    validation: { maxBuildAttempts: 3 },
     telemetry: { enabled: false },
   };
 }
@@ -132,6 +156,27 @@ describe("register + context", () => {
     expect(ctx.context).toContain("[PROJECT]");
     expect(ctx.context).toContain(first.meta.projectId);
     expect(ctx.context).toContain("Add login");
+
+    const memorySentinel = "CLAUDE_MEM_FULL_DUMP_SENTINEL";
+    const owaspSentinel = "OWASP_FULL_GUIDE_SENTINEL";
+    const memoryDir = join(
+      systemRoot,
+      "projects",
+      first.meta.projectId,
+      "memory",
+    );
+    const owaspDir = join(systemRoot, "providers", "refs", "owasp-top10");
+    mkdirSync(memoryDir, { recursive: true });
+    mkdirSync(owaspDir, { recursive: true });
+    writeFileSync(join(memoryDir, "full-dump.md"), memorySentinel);
+    writeFileSync(join(owaspDir, "full-guide.md"), owaspSentinel);
+
+    const isolatedCtx = buildProjectContext(config, {
+      projectId: first.meta.projectId,
+      includeGit: false,
+    });
+    expect(isolatedCtx.context).not.toContain(memorySentinel);
+    expect(isolatedCtx.context).not.toContain(owaspSentinel);
 
     const listed = listProjects(config);
     expect(listed.some((p) => p.projectId === first.meta.projectId)).toBe(true);

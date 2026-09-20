@@ -1,7 +1,7 @@
 # AI Coding System — Provider MCP Facade Design
 
 **Date:** 2026-09-20  
-**Status:** Approved — implementation plan ready (`docs/superpowers/plans/2026-09-20-provider-mcp-facade.md`)
+**Status:** Implemented (phased)
 **Location:** `C:\AI-Coding-System`
 
 ## 1. Purpose
