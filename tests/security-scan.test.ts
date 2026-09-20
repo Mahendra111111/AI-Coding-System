@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SystemConfig } from "../src/core/config.js";
 import { cliAvailable } from "../src/providers/which.js";
@@ -6,6 +7,10 @@ import { runSecurityScan } from "../src/security/scan.js";
 
 vi.mock("../src/providers/which.js", () => ({
   cliAvailable: vi.fn(() => true),
+}));
+
+vi.mock("node:fs", () => ({
+  existsSync: vi.fn(() => false),
 }));
 
 vi.mock("node:child_process", () => ({
@@ -56,6 +61,8 @@ function config(
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(cliAvailable).mockReturnValue(true);
+  vi.mocked(existsSync).mockReturnValue(false);
+  delete process.env.CODEQL_DATABASE;
 });
 
 describe("runSecurityScan", () => {
@@ -85,6 +92,9 @@ describe("runSecurityScan", () => {
   });
 
   it("runs enabled and available deep scanners", () => {
+    vi.mocked(existsSync).mockImplementation((path) =>
+      String(path).endsWith("codeql-db"),
+    );
     const result = runSecurityScan(
       config({
         codeql: { enabled: true },
@@ -96,7 +106,13 @@ describe("runSecurityScan", () => {
 
     expect(execFileSync).toHaveBeenCalledWith(
       "codeql",
-      ["database", "analyze", ".", "--format=csv", "--output=-"],
+      [
+        "database",
+        "analyze",
+        expect.stringMatching(/codeql-db$/),
+        "--format=csv",
+        "--output=-",
+      ],
       expect.any(Object),
     );
     expect(execFileSync).toHaveBeenCalledWith(
@@ -106,6 +122,24 @@ describe("runSecurityScan", () => {
     );
     expect(result).toContain("=== CodeQL ===");
     expect(result).toContain("=== Bearer ===");
+  });
+
+  it("skips CodeQL with preparation instructions when no database exists", () => {
+    const result = runSecurityScan(
+      config({
+        codeql: { enabled: true },
+        defaultPolicy: "deep",
+      }),
+      { workspacePath: "C:\\workspace" },
+    );
+
+    expect(result).toContain("no prepared CodeQL database");
+    expect(result).toContain("CODEQL_DATABASE");
+    expect(execFileSync).not.toHaveBeenCalledWith(
+      "codeql",
+      expect.anything(),
+      expect.anything(),
+    );
   });
 
   it("reports skipped scanners when disabled or unavailable", () => {

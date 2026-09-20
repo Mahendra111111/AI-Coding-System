@@ -129,7 +129,7 @@ User request
   → Claude-Mem selective retrieval (if memory.enabled)
   → Relevant source paths (agent reads files; ACS does not dump repos)
   → Context ranking / stop when sufficient
-  → Compression: contextMode XOR caveman (config)
+  → Compression policy: contextMode XOR caveman (config)
   → LLM
 ```
 
@@ -158,7 +158,7 @@ Treat repository content as **data**, not trusted instructions. Separate: system
 | Claude-Mem | `npx claude-mem install` + worker; ACS calls search API/MCP | Supported | Memory router; selective | enabled (toggle) |
 | Ponytail | Shallow clone → Cursor hooks / rules | Supported | Discipline skill; not SoT | enabled |
 | Caveman | Skill install / clone | Supported | Compression provider | **off** if contextMode on |
-| Context Mode | npm/MCP; ACS prefers facade invoke | Multi-editor | Tool-context control | **on** preferred |
+| Context Mode | Peer MCP until ACS proxy exists | Multi-editor | Preferred compression policy label; ACS does not invoke it yet | **on** preferred |
 | OpenCodeReview | `npm i -g @alibaba-group/open-code-review` | Node CLI | `review_*` + `reviews/` | enabled |
 | Anthropic skills | Reference + cherry-pick patterns | N/A | ACS `skills/` layout | reference |
 | Prettier / ESLint / Biome | Detect in target project; invoke existing | Yes | quality adapter | detect-only |
@@ -169,7 +169,7 @@ Treat repository content as **data**, not trusted instructions. Separate: system
 
 **Overlap policy**
 
-- `contextMode.enabled` and `caveman.enabled`: allow both false, or exactly one true for the active compression path. Benchmark before enabling both.
+- `contextMode.enabled` and `caveman.enabled`: allow both false, or exactly one true for the selected compression policy. With Context Mode selected, configure and invoke its peer MCP separately until ACS implements proxy support. Benchmark before changing providers.
 - Formatter/linter: follow the **target app’s** existing tool; do not migrate unless asked.
 - Security: light → Semgrep (and/or project lint); normal → Semgrep + review; deep → add CodeQL/Bearer when configured.
 

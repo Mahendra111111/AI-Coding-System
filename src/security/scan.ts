@@ -1,4 +1,6 @@
 import { execFileSync } from "node:child_process";
+import { existsSync } from "node:fs";
+import { resolve } from "node:path";
 import type { SecurityPolicy, SystemConfig } from "../core/config.js";
 import { cliAvailable } from "../providers/which.js";
 
@@ -93,7 +95,7 @@ function runTool(
       .join("\n")
       .trim();
     const findings = structuredJson ? compactJson(output) : output;
-    return `=== ${label} ===\n${findings || executionError.message || "Scan failed."}`;
+    return `=== ${label} ===\nFailed: ${findings || executionError.message || "Scan failed."}`;
   }
 }
 
@@ -119,17 +121,35 @@ function reviewNote(): string {
 
 function deepSections(config: SystemConfig, workspacePath: string): string[] {
   const sections: string[] = [];
+  const configuredDatabase = process.env.CODEQL_DATABASE?.trim();
+  const defaultDatabase = resolve(workspacePath, "codeql-db");
+  const codeqlDatabase =
+    configuredDatabase && existsSync(configuredDatabase)
+      ? resolve(configuredDatabase)
+      : existsSync(defaultDatabase)
+        ? defaultDatabase
+        : null;
 
   if (!config.security.codeql.enabled) {
     sections.push("=== CodeQL ===\nSkipped: disabled in configuration.");
   } else if (!cliAvailable("codeql")) {
     sections.push("=== CodeQL ===\nSkipped: CLI unavailable.");
+  } else if (!codeqlDatabase) {
+    sections.push(
+      "=== CodeQL ===\nSkipped: no prepared CodeQL database. Create one with `codeql database create <database-path> --source-root <workspace>` and set CODEQL_DATABASE to that path, or place it at <workspace>/codeql-db.",
+    );
   } else {
     sections.push(
       runTool(
         "CodeQL",
         "codeql",
-        ["database", "analyze", ".", "--format=csv", "--output=-"],
+        [
+          "database",
+          "analyze",
+          codeqlDatabase,
+          "--format=csv",
+          "--output=-",
+        ],
         workspacePath,
         false,
       ),

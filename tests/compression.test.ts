@@ -40,6 +40,22 @@ describe("compression policy", () => {
       caveman: { enabled: true },
     });
     expect(activeCompressionProvider(c)).toBe("caveman");
+    expect(assertCompressionPolicy(c)).toEqual({
+      ok: true,
+      detail: "active compression: caveman",
+    });
+  });
+
+  it("supports no active compression provider", () => {
+    const c = base({
+      contextMode: { enabled: false },
+      caveman: { enabled: false },
+    });
+    expect(activeCompressionProvider(c)).toBe("none");
+    expect(assertCompressionPolicy(c)).toEqual({
+      ok: true,
+      detail: "active compression: none",
+    });
   });
 
   it("warns when both enabled (overlap)", () => {

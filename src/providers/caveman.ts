@@ -17,8 +17,8 @@ export function getCavemanGuidance(config: SystemConfig): string {
   }
 
   if (active === "context-mode") {
-    return "Context-mode is active; caveman compression is off. ACS uses context-mode for tool-output compression. Enable caveman only with contextMode disabled (mutually exclusive).";
+    return "Context Mode is the preferred compression policy; caveman is off. ACS currently selects this policy label but does not invoke or proxy Context Mode. Configure and invoke the Context Mode MCP separately until ACS adds proxy support. Enable caveman only with contextMode disabled (mutually exclusive).";
   }
 
-  return "No compression provider active; caveman is off. Enable context-mode (preferred) or caveman in config/system.json — not both.";
+  return "No compression policy active; caveman is off. Enable Context Mode (preferred policy; invoke its MCP separately) or caveman in config/system.json — not both.";
 }

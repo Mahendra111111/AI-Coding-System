@@ -126,4 +126,40 @@ describe("OpenCodeReview output paths", () => {
     );
     expect(execFileSync).not.toHaveBeenCalled();
   });
+
+  it("reports a non-zero OCR exit as failed", () => {
+    vi.mocked(execFileSync).mockImplementationOnce(() => {
+      throw Object.assign(new Error("ocr exited with status 1"), {
+        stderr: "scanner crashed",
+      });
+    });
+
+    const result = runOpenCodeReview(
+      makeConfig(makeTemp("acs-review-failed-")),
+      {
+        workspacePath: makeTemp("acs-review-failed-workspace-"),
+        projectId: "project-123",
+        mode: "diff",
+      },
+    );
+
+    expect(result).toContain("Review failed; diagnostic saved:");
+    expect(result).toContain("scanner crashed");
+  });
+
+  it.each(["..\\outside", "../outside", "project/../../outside"])(
+    "refuses unsafe projectId %s",
+    (projectId) => {
+      const config = makeConfig(makeTemp("acs-review-traversal-"));
+
+      expect(() =>
+        runOpenCodeReview(config, {
+          workspacePath: makeTemp("acs-review-workspace-"),
+          projectId,
+          mode: "diff",
+        }),
+      ).toThrow(/invalid projectId|outside the managed projects/i);
+      expect(execFileSync).not.toHaveBeenCalled();
+    },
+  );
 });

@@ -26,6 +26,10 @@ Safety carve-outs (never cut):
 Lazy about the solution, never about reading. Mark intentional shortcuts with a ponytail: comment naming the ceiling and upgrade path.`;
 
 export function getDisciplineRules(config: SystemConfig): string {
+  if (!config.ponytail.enabled) {
+    return "Ponytail discipline rules are disabled in config/system.json. Enable ponytail.enabled to use the implementation-discipline guidance.";
+  }
+
   const checkout = resolve(config.systemRoot, PONYTAIL_CHECKOUT);
   if (existsSync(checkout)) {
     return `${DISCIPLINE_LADDER}\n\nPonytail checkout: ${checkout}\nInstall Cursor hooks: node ${resolve(checkout, "scripts/cursor-hooks.js")} install`;

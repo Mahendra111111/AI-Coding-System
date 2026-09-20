@@ -126,4 +126,38 @@ describe("finalizeTask", () => {
     expect(result).toContain("disabled in configuration");
     expect(result).toContain("Refused:");
   });
+
+  it("leaves unsuccessful requested checks incomplete", () => {
+    mocks.runQualityCheck.mockReturnValue("Quality tool conflict detected. Skipped auto-run.");
+    mocks.runSecurityScan.mockReturnValue(
+      "=== Semgrep ===\nSkipped: CLI unavailable.",
+    );
+    mocks.runOpenCodeReview.mockReturnValue(
+      "OpenCodeReview is not installed. Install: npm install -g @alibaba-group/open-code-review",
+    );
+
+    const result = finalizeTask(config(), {
+      workspacePath: "D:\\app",
+      qualityCheck: true,
+      securityScan: true,
+      review: true,
+    });
+
+    expect(result).toContain("- [ ] Quality check");
+    expect(result).toContain("- [ ] Security scan");
+    expect(result).toContain("- [ ] Review");
+  });
+
+  it("marks command error output incomplete", () => {
+    mocks.runOpenCodeReview.mockReturnValue(
+      "Review saved: review.json\n\nError: OCR exited with status 1",
+    );
+
+    const result = finalizeTask(config(), {
+      workspacePath: "D:\\app",
+      review: true,
+    });
+
+    expect(result).toContain("- [ ] Review");
+  });
 });

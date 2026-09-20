@@ -47,12 +47,23 @@ describe("discipline rules", () => {
       expect(rules).toContain("providers\\skills\\ponytail");
     }
   });
+
+  it("returns a disabled message when ponytail is off", () => {
+    const rules = getDisciplineRules(
+      base({ ponytail: { enabled: false } }),
+    );
+
+    expect(rules.toLowerCase()).toContain("disabled");
+    expect(rules).not.toContain("1. Does this need to exist?");
+  });
 });
 
 describe("compression guidance", () => {
-  it("reports context-mode active when caveman disabled", () => {
+  it("reports Context Mode as a peer preferred policy", () => {
     const guidance = getCavemanGuidance(base());
-    expect(guidance.toLowerCase()).toContain("context-mode");
+    expect(guidance.toLowerCase()).toMatch(/context[ -]mode/);
+    expect(guidance.toLowerCase()).toContain("separately");
+    expect(guidance.toLowerCase()).toContain("does not invoke");
     expect(guidance.toLowerCase()).toMatch(/caveman.*off|off.*caveman/);
   });
 

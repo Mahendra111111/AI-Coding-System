@@ -221,7 +221,7 @@ function runCommand(
     const stdout = execErr.stdout?.trim() ?? "";
     const stderr = execErr.stderr?.trim() ?? "";
     const body = [stdout, stderr].filter(Boolean).join("\n");
-    return `=== ${label} ===\n${body || execErr.message || "command failed"}`;
+    return `=== ${label} ===\nFailed: ${body || execErr.message || "command failed"}`;
   }
 }
 

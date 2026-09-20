@@ -34,6 +34,12 @@ function checklistItem(
   return `- [${complete ? "x" : " "}] ${label}\n${indented}`;
 }
 
+function checkSucceeded(output: string): boolean {
+  return !/(?:\bfailed\b|\bfailure\b|\berror\b|\bskipped\b|\bmissing\b|\bnot (?:installed|configured|available)\b|\bunavailable\b|\binstall(?:ation)?(?:\s+hint)?\b|\bconflict\b|\brefused\b)/i.test(
+    output,
+  );
+}
+
 function requestedHandoff(args: FinalizeTaskArgs): HandoffUpdate | null {
   const direct: HandoffUpdate = {
     currentTask: args.currentTask,
@@ -107,22 +113,24 @@ export function finalizeTask(
   report.push(checklistItem(!build.startsWith("Build: failed"), "Build", build));
 
   if (args.qualityCheck === true) {
+    const quality = runQualityCheck(args.workspacePath);
     report.push(
-      checklistItem(true, "Quality check", runQualityCheck(args.workspacePath)),
+      checklistItem(checkSucceeded(quality), "Quality check", quality),
     );
   } else {
     report.push(checklistItem(false, "Quality check", "Skipped: not requested."));
   }
 
   if (args.securityScan === true) {
+    const security = runSecurityScan(config, {
+      workspacePath: args.workspacePath,
+      policy: args.securityPolicy,
+    });
     report.push(
       checklistItem(
-        true,
+        checkSucceeded(security),
         "Security scan",
-        runSecurityScan(config, {
-          workspacePath: args.workspacePath,
-          policy: args.securityPolicy,
-        }),
+        security,
       ),
     );
   } else {
@@ -130,15 +138,16 @@ export function finalizeTask(
   }
 
   if (args.review === true && config.review.openCodeReview.enabled) {
+    const review = runOpenCodeReview(config, {
+      workspacePath: args.workspacePath,
+      projectId: getProjectId(),
+      mode: "diff",
+    });
     report.push(
       checklistItem(
-        true,
+        checkSucceeded(review),
         "Review",
-        runOpenCodeReview(config, {
-          workspacePath: args.workspacePath,
-          projectId: getProjectId(),
-          mode: "diff",
-        }),
+        review,
       ),
     );
   } else {

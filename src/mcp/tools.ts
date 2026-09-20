@@ -248,8 +248,25 @@ export function createServer(): McpServer {
     "provider_status",
     "Return configuration and local availability status for all optional providers.",
     {},
-    async () =>
-      textResult(JSON.stringify(getAllProviderStatuses(config), null, 2)),
+    async () => {
+      try {
+        return textResult(
+          JSON.stringify(getAllProviderStatuses(config), null, 2),
+        );
+      } catch (error) {
+        return textResult(
+          JSON.stringify(
+            {
+              error: "Provider status unavailable",
+              detail:
+                error instanceof Error ? error.message : String(error),
+            },
+            null,
+            2,
+          ),
+        );
+      }
+    },
   );
 
   server.tool(
@@ -283,7 +300,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "compression_guidance",
-    "Return active compression guidance (context-mode vs caveman) and terse-output hints when caveman is enabled.",
+    "Return the preferred compression policy. Context Mode must be invoked as a separate peer MCP until ACS proxies it; caveman guidance is returned directly when enabled.",
     {},
     async () => textResult(getCavemanGuidance(config)),
   );
