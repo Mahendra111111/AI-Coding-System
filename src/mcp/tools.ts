@@ -21,6 +21,7 @@ import {
   updateProjectState,
 } from "../project/state.js";
 import { getCavemanGuidance } from "../providers/caveman.js";
+import { runOpenCodeReview } from "../providers/openCodeReview.js";
 import { securityRefs } from "../providers/owasp.js";
 import { getDisciplineRules } from "../providers/ponytail.js";
 import {
@@ -258,6 +259,44 @@ export function createServer(): McpServer {
       workspacePath: z.string().describe("Absolute workspace path"),
     },
     async ({ workspacePath }) => textResult(runQualityCheck(workspacePath)),
+  );
+
+  server.tool(
+    "review_diff",
+    "Run OpenCodeReview against the current workspace diff and save JSON output in the project reviews directory.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+      projectId: z.string().optional(),
+    },
+    async ({ workspacePath, projectId }) => {
+      const id = resolveProjectId(config, { workspacePath, projectId });
+      return textResult(
+        runOpenCodeReview(config, {
+          workspacePath,
+          projectId: id,
+          mode: "diff",
+        }),
+      );
+    },
+  );
+
+  server.tool(
+    "review_scan",
+    "Run an OpenCodeReview workspace scan and save JSON output in the project reviews directory.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+      projectId: z.string().optional(),
+    },
+    async ({ workspacePath, projectId }) => {
+      const id = resolveProjectId(config, { workspacePath, projectId });
+      return textResult(
+        runOpenCodeReview(config, {
+          workspacePath,
+          projectId: id,
+          mode: "scan",
+        }),
+      );
+    },
   );
 
   server.tool(
