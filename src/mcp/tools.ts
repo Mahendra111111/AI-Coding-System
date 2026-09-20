@@ -21,6 +21,7 @@ import {
   updateProjectState,
 } from "../project/state.js";
 import { getCavemanGuidance } from "../providers/caveman.js";
+import { securityRefs } from "../providers/owasp.js";
 import { getDisciplineRules } from "../providers/ponytail.js";
 import { getAllProviderStatuses } from "../providers/status.js";
 
@@ -234,6 +235,25 @@ export function createServer(): McpServer {
     "Return active compression guidance (context-mode vs caveman) and terse-output hints when caveman is enabled.",
     {},
     async () => textResult(getCavemanGuidance(config)),
+  );
+
+  server.tool(
+    "security_refs",
+    "Return compact OWASP secure-coding excerpts for a topic (input-validation, auth, session, crypto, injection, access-control, config, general).",
+    {
+      topic: z
+        .string()
+        .describe(
+          "Security topic: input-validation, auth, session, crypto, injection, access-control, config, general",
+        ),
+      maxChars: z
+        .number()
+        .optional()
+        .default(2000)
+        .describe("Maximum characters to return (default 2000)"),
+    },
+    async ({ topic, maxChars }) =>
+      textResult(securityRefs(config, topic, maxChars ?? 2000)),
   );
 
   if (config.graphify.enabled) {
