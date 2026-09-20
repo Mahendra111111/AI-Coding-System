@@ -4,6 +4,8 @@ Server entry (after `npm run build`):
 
 `C:\AI-Coding-System\dist\index.js`
 
+Editors configure **one MCP server** (`ai-coding-system`). Upstream tools (Claude-Mem, Graphify, Ponytail, OpenCodeReview, Semgrep, etc.) are **not** separate MCP entries — ACS invokes them through facade tools when you call orchestrated endpoints.
+
 ## Cursor
 
 **User-global (recommended):** `%USERPROFILE%\.cursor\mcp.json`
@@ -58,12 +60,25 @@ Add the same stdio MCP server in Antigravity’s MCP / tools settings. Prefer th
 
 Any editor that supports **MCP stdio servers** can use the same command/args. Place the server definition in that product’s MCP config file.
 
+## Recommended agent workflow
+
+| Phase | MCP tools |
+|-------|-----------|
+| Session start | `register_project`, `get_project_context` (or `get_handoff` for fast switch) |
+| Task planning | `prepare_context` — task-scoped assembly; opt in to memory/graph only when needed |
+| Implementation | `discipline_rules`, `security_refs`; targeted `quality_check` / `security_scan` / `review_diff` |
+| Task complete | `finalize_task` — git summary, optional checks, handoff update, session cleanup |
+
+Do **not** wire Claude-Mem, Graphify, or other providers as additional MCP servers. Do **not** call memory, graph, or scan tools on every turn.
+
 ## Verify
 
 In the editor chat:
 
 1. Ask: “Call the `doctor` MCP tool from ai-coding-system”
 2. Ask: “Register this workspace with `register_project`”
-3. Ask: “Call `get_project_context` for this workspace”
+3. Ask: “Call `prepare_context` for this workspace with task: verify MCP wiring”
+4. Ask: “Call `discipline_rules`”
+5. Ask: “Call `finalize_task` for this workspace with currentTask: verify wiring”
 
 If tools do not appear, confirm `dist\index.js` exists and Node is on PATH for GUI apps (sign out/in after installing Node).

@@ -1,14 +1,30 @@
 ---
-description: Use AI Coding System MCP for shared project context
+description: Use AI Coding System MCP for shared project context and task workflow
 alwaysApply: true
 ---
 
 # AI Coding System
 
-Before substantial coding in this workspace:
+Connect **one** MCP server: `ai-coding-system` → `node C:\AI-Coding-System\dist\index.js`. Do not add upstream providers (Claude-Mem, Graphify, Ponytail, etc.) as separate MCP entries — ACS exposes them through facade tools.
 
-1. Call MCP tool `get_project_context` (or `register_project`) with the workspace path.
-2. Follow constraints and handoff next actions.
-3. After meaningful completed work, call `update_handoff` with current task, completed items, files changed, remaining work, and any important decision.
+## Session start
 
-Do not ask the user to re-explain architecture already present in project context.
+1. Call `register_project` (first time) or `get_project_context` with the workspace path.
+2. Follow constraints, handoff next actions, and decisions already stored in project context.
+3. Do not ask the user to re-explain architecture already present in context.
+
+## Per task
+
+1. Call `prepare_context` with the workspace path and a clear task description (acceptance criteria). Enable `includeMemory` or `includeGraph` only when the task needs them — defaults are off.
+2. While implementing, call `discipline_rules` for the compact YAGNI ladder and safety carve-outs. Use `security_refs` for topic-scoped OWASP excerpts when security matters.
+3. Use targeted tools (`quality_check`, `security_scan`, `review_diff`) only when relevant — not on every edit.
+
+## Task complete
+
+Call `finalize_task` with workspace path, handoff fields (`currentTask`, `completed`, `filesChanged`, `remaining`), and optional checks (`qualityCheck`, `securityScan`, `review`) only when warranted.
+
+## Token discipline
+
+- Do not load all providers into every turn.
+- Do not call `memory_*`, graph tools, or full scans unless the current task requires them.
+- Prefer `get_handoff` for fast editor switches instead of re-fetching full context.

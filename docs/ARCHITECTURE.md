@@ -12,6 +12,7 @@ C:\AI-Coding-System\
   dist\                Built MCP entry (node dist/index.js)
   config\system.json   System config
   templates\           Seed Markdown for new projects
+  skills\              ACS task skills (Anthropic-style folders)
   projects\<id>\       Per-project brain
     project.json
     context\
@@ -36,7 +37,31 @@ workspace path
 
 Same remote after a folder move → same `projectId`; `workspacePath` is updated.
 
-## Context assembly
+## One MCP facade
+
+Editors configure **only** `ai-coding-system`. External providers (Claude-Mem, Graphify, Ponytail, OpenCodeReview, Semgrep, etc.) are thin adapters under `src/providers/` — agents call ACS tools; ACS invokes providers on demand.
+
+| Group | Tools |
+|-------|-------|
+| Project | `register_project`, `get_project_context`, `get_handoff`, `update_handoff`, `update_project_state`, `list_projects` |
+| Orchestrate | `prepare_context`, `finalize_task` |
+| Graph | `graph_index`, `graph_query`, `graph_explain` |
+| Memory | `memory_search`, `memory_timeline`, `memory_get` |
+| Quality | `quality_detect`, `quality_check` |
+| Security | `security_scan`, `security_refs` |
+| Review | `review_diff`, `review_scan` |
+| Policy | `discipline_rules`, `compression_guidance` |
+| Meta | `doctor`, `provider_status`, `get_git_summary` |
+
+`get_project_context` does **not** auto-merge Claude-Mem or full provider dumps. Memory and graph are opt-in via `memory_*` or `prepare_context` flags.
+
+## Context orchestrator
+
+`prepare_context` assembles task-scoped context in priority order: task → acceptance criteria → modified files → build errors → security findings → architecture → constraints → handoff. Stops when sufficient. Optional selective memory and graph relationships; never full-repo or full-database dumps.
+
+`finalize_task` runs the end-of-task checklist: git summary, build validation, optional quality/security/review checks, handoff update, and managed session-temp cleanup.
+
+## Context assembly (legacy path)
 
 `get_project_context` builds a compact tagged document:
 
