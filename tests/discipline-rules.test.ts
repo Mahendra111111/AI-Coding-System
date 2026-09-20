@@ -61,7 +61,7 @@ describe("discipline rules", () => {
 describe("compression guidance", () => {
   it("reports Context Mode as a peer preferred policy", () => {
     const guidance = getCavemanGuidance(base());
-    expect(guidance.toLowerCase()).toMatch(/context[ -]mode/);
+    expect(guidance.toLowerCase()).toContain("context mode");
     expect(guidance.toLowerCase()).toContain("separately");
     expect(guidance.toLowerCase()).toContain("does not invoke");
     expect(guidance.toLowerCase()).toMatch(/caveman.*off|off.*caveman/);
@@ -77,6 +77,6 @@ describe("compression guidance", () => {
 
     expect(guidance.toLowerCase()).toContain("caveman");
     expect(guidance.toLowerCase()).toMatch(/terse|brief|compress|filler/);
-    expect(guidance.toLowerCase()).not.toContain("context-mode is active");
+    expect(guidance.toLowerCase()).not.toContain("context mode is the preferred");
   });
 });

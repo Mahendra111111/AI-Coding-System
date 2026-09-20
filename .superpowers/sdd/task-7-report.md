@@ -4,7 +4,7 @@
 **COMPLETE** — TDD RED→GREEN, committed.
 
 ## Commit
-- `8f98d65` — `feat: task-scoped OWASP security refs tool`
+- `e786efe` — `feat: task-scoped OWASP security refs tool`
 
 ## Files Created / Modified
 | File | Purpose |

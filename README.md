@@ -15,14 +15,29 @@ powershell -ExecutionPolicy Bypass -File .\install.ps1
 
 Then restart Cursor (or reload MCP). The installer merges into `%USERPROFILE%\.cursor\mcp.json` (with backup).
 
-Manual MCP entry:
+If `node` / `npm` are “not recognized” in a terminal (PATH not refreshed), build with:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1
+```
+
+Or use full paths:
+
+```powershell
+& "C:\Program Files\nodejs\npm.cmd" run build
+```
+
+Manual MCP entry (full `node.exe` path — required when PATH is incomplete for GUI apps):
 
 ```json
 {
   "mcpServers": {
     "ai-coding-system": {
-      "command": "node",
-      "args": ["C:\\AI-Coding-System\\dist\\index.js"]
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": ["C:\\AI-Coding-System\\dist\\index.js"],
+      "env": {
+        "PATH": "C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Program Files\\Git\\cmd"
+      }
     }
   }
 }
@@ -38,17 +53,21 @@ Optional thin Cursor rule: [examples/cursor-rule.mdc](examples/cursor-rule.mdc)
 
 ## MCP tools
 
-| Tool | Purpose |
-|------|---------|
-| `register_project` | Create/load project brain (idempotent) |
-| `get_project_context` | Compact durable context |
-| `get_handoff` | Latest handoff only |
-| `update_handoff` | Persist continuation state |
-| `update_project_state` | Patch PROJECT_STATE / decisions / constraints |
-| `list_projects` | List registered projects |
-| `get_git_summary` | Branch / dirty files / recent commits |
-| `doctor` | Health checks |
-| `graph_query` / `graph_explain` / `graph_index` | Optional Graphify (if installed) |
+**24 tools** on one server (`ai-coding-system`):
+
+| Group | Tools |
+|-------|--------|
+| Project | `register_project`, `get_project_context`, `get_handoff`, `update_handoff`, `update_project_state`, `list_projects` |
+| Orchestrate | `prepare_context`, `finalize_task` |
+| Graph | `graph_index`, `graph_query`, `graph_explain` |
+| Memory | `memory_search`, `memory_get` |
+| Discipline | `discipline_rules`, `compression_guidance` |
+| Quality | `quality_detect`, `quality_check` |
+| Review | `review_diff`, `review_scan` |
+| Security | `security_refs`, `security_scan` |
+| Meta | `doctor`, `provider_status`, `get_git_summary` |
+
+If Cursor shows only ~11 tools, rebuild (`scripts\build.ps1`) and **reload MCP**.
 
 ## Project identity
 
@@ -61,10 +80,13 @@ Moving a folder with the same remote does **not** create a duplicate brain.
 ## Develop
 
 ```powershell
+# Prefer when PATH has node/npm:
 npm install
 npm run build
 npm test
-npm start   # stdio MCP server
+
+# If npm/node are "not recognized":
+powershell -ExecutionPolicy Bypass -File .\scripts\build.ps1
 ```
 
 ## Docs

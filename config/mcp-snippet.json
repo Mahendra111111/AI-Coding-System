@@ -1,8 +1,11 @@
 ﻿{
   "mcpServers": {
     "ai-coding-system": {
-      "command": "node",
-      "args": ["C:\\AI-Coding-System\\dist\\index.js"]
+      "command": "C:\\Program Files\\nodejs\\node.exe",
+      "args": ["C:\\AI-Coding-System\\dist\\index.js"],
+      "env": {
+        "PATH": "C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Program Files\\Git\\cmd"
+      }
     }
   }
 }

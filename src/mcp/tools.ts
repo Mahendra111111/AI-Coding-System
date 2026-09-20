@@ -248,25 +248,8 @@ export function createServer(): McpServer {
     "provider_status",
     "Return configuration and local availability status for all optional providers.",
     {},
-    async () => {
-      try {
-        return textResult(
-          JSON.stringify(getAllProviderStatuses(config), null, 2),
-        );
-      } catch (error) {
-        return textResult(
-          JSON.stringify(
-            {
-              error: "Provider status unavailable",
-              detail:
-                error instanceof Error ? error.message : String(error),
-            },
-            null,
-            2,
-          ),
-        );
-      }
-    },
+    async () =>
+      textResult(JSON.stringify(getAllProviderStatuses(config), null, 2)),
   );
 
   server.tool(
@@ -300,7 +283,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "compression_guidance",
-    "Return the preferred compression policy. Context Mode must be invoked as a separate peer MCP until ACS proxies it; caveman guidance is returned directly when enabled.",
+    "Return active compression guidance (context-mode vs caveman) and terse-output hints when caveman is enabled.",
     {},
     async () => textResult(getCavemanGuidance(config)),
   );
@@ -417,59 +400,74 @@ export function createServer(): McpServer {
     async (args) => textResult(finalizeTask(config, args)),
   );
 
-  if (config.graphify.enabled) {
-    server.tool(
-      "graph_query",
-      "Query Graphify knowledge graph for the workspace (optional; requires graphify CLI).",
-      {
-        workspacePath: z.string(),
-        question: z.string(),
-      },
-      async ({ workspacePath, question }) => {
-        if (!isGraphifyAvailable()) {
-          return textResult(
-            "Graphify not installed. Install: uv tool install graphifyy\nThen: graphify extract . --code-only",
-          );
-        }
-        registerProject(config, { workspacePath });
-        return textResult(graphQuery(workspacePath, question));
-      },
-    );
+  // Always register graph tools so the MCP surface is complete; degrade with hints
+  // when Graphify is disabled in config or the CLI is missing.
+  server.tool(
+    "graph_query",
+    "Query Graphify knowledge graph for the workspace (optional; requires graphify CLI).",
+    {
+      workspacePath: z.string(),
+      question: z.string(),
+    },
+    async ({ workspacePath, question }) => {
+      if (!config.graphify.enabled) {
+        return textResult(
+          "Graphify is disabled in config/system.json (graphify.enabled=false).",
+        );
+      }
+      if (!isGraphifyAvailable()) {
+        return textResult(
+          "Graphify not installed. Install: uv tool install graphifyy\nThen: graphify extract . --code-only",
+        );
+      }
+      registerProject(config, { workspacePath });
+      return textResult(graphQuery(workspacePath, question));
+    },
+  );
 
-    server.tool(
-      "graph_explain",
-      "Explain a symbol/node via Graphify (optional; requires graphify CLI).",
-      {
-        workspacePath: z.string(),
-        symbol: z.string(),
-      },
-      async ({ workspacePath, symbol }) => {
-        if (!isGraphifyAvailable()) {
-          return textResult(
-            "Graphify not installed. Install: uv tool install graphifyy",
-          );
-        }
-        return textResult(graphExplain(workspacePath, symbol));
-      },
-    );
+  server.tool(
+    "graph_explain",
+    "Explain a symbol/node via Graphify (optional; requires graphify CLI).",
+    {
+      workspacePath: z.string(),
+      symbol: z.string(),
+    },
+    async ({ workspacePath, symbol }) => {
+      if (!config.graphify.enabled) {
+        return textResult(
+          "Graphify is disabled in config/system.json (graphify.enabled=false).",
+        );
+      }
+      if (!isGraphifyAvailable()) {
+        return textResult(
+          "Graphify not installed. Install: uv tool install graphifyy",
+        );
+      }
+      return textResult(graphExplain(workspacePath, symbol));
+    },
+  );
 
-    server.tool(
-      "graph_index",
-      "Build or refresh Graphify index for a workspace (code-only by default).",
-      {
-        workspacePath: z.string(),
-        codeOnly: z.boolean().optional().default(true),
-      },
-      async ({ workspacePath, codeOnly }) => {
-        if (!isGraphifyAvailable()) {
-          return textResult(
-            "Graphify not installed. Install: uv tool install graphifyy",
-          );
-        }
-        return textResult(graphExtract(workspacePath, codeOnly ?? true));
-      },
-    );
-  }
+  server.tool(
+    "graph_index",
+    "Build or refresh Graphify index for a workspace (code-only by default).",
+    {
+      workspacePath: z.string(),
+      codeOnly: z.boolean().optional().default(true),
+    },
+    async ({ workspacePath, codeOnly }) => {
+      if (!config.graphify.enabled) {
+        return textResult(
+          "Graphify is disabled in config/system.json (graphify.enabled=false).",
+        );
+      }
+      if (!isGraphifyAvailable()) {
+        return textResult(
+          "Graphify not installed. Install: uv tool install graphifyy",
+        );
+      }
+      return textResult(graphExtract(workspacePath, codeOnly ?? true));
+    },
+  );
 
   return server;
 }

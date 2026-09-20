@@ -56,12 +56,21 @@ if ($LASTEXITCODE -ne 0) { throw "npm run build failed" }
 $Entry = Join-Path $Root "dist\index.js"
 if (-not (Test-Path $Entry)) { throw "Build output missing: $Entry" }
 
+$NodeExe = "C:\Program Files\nodejs\node.exe"
+if (-not (Test-Path $NodeExe)) {
+  $nodeCmd = Get-Command node -ErrorAction SilentlyContinue
+  if ($nodeCmd) { $NodeExe = $nodeCmd.Source } else { $NodeExe = "node" }
+}
+
 $McpSnippet = @"
 {
   "mcpServers": {
     "ai-coding-system": {
-      "command": "node",
-      "args": ["$($Entry.Replace('\','\\'))"]
+      "command": "$($NodeExe.Replace('\','\\'))",
+      "args": ["$($Entry.Replace('\','\\'))"],
+      "env": {
+        "PATH": "C:\\Program Files\\nodejs;C:\\Windows\\System32;C:\\Program Files\\Git\\cmd"
+      }
     }
   }
 }
@@ -81,8 +90,11 @@ if (-not $SkipCursorMcpMerge) {
   if (-not (Test-Path $CursorDir)) { New-Item -ItemType Directory -Path $CursorDir | Out-Null }
 
   $serverEntry = @{
-    command = "node"
+    command = $NodeExe
     args = @($Entry)
+    env = @{
+      PATH = "C:\Program Files\nodejs;C:\Windows\System32;C:\Program Files\Git\cmd"
+    }
   }
 
   if (Test-Path $CursorMcp) {
