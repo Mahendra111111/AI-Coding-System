@@ -10,6 +10,7 @@ import {
   isGraphifyAvailable,
 } from "../graph/graphify.js";
 import { formatGitSummary, getGitSummary } from "../git/summary.js";
+import { finalizeTask } from "../orchestrator/finalizeTask.js";
 import { prepareContext } from "../orchestrator/prepareContext.js";
 import {
   listProjects,
@@ -372,6 +373,31 @@ export function createServer(): McpServer {
     },
     async ({ workspacePath, policy }) =>
       textResult(runSecurityScan(config, { workspacePath, policy })),
+  );
+
+  server.tool(
+    "finalize_task",
+    "Run the end-of-task checklist: git summary, build validation, requested quality/security/review checks, handoff update, and managed session-temp cleanup.",
+    {
+      workspacePath: z.string().describe("Absolute workspace path"),
+      projectId: z.string().optional(),
+      sessionId: z
+        .string()
+        .optional()
+        .describe("Managed session identifier to clean after finalization"),
+      qualityCheck: z.boolean().optional().default(false),
+      securityScan: z.boolean().optional().default(false),
+      securityPolicy: z.enum(["light", "normal", "deep"]).optional(),
+      review: z.boolean().optional().default(false),
+      currentTask: z.string().optional(),
+      completed: z.array(z.string()).optional(),
+      filesChanged: z.array(z.string()).optional(),
+      decision: z.string().optional(),
+      validation: z.string().optional(),
+      remaining: z.string().optional(),
+      editor: z.string().optional(),
+    },
+    async (args) => textResult(finalizeTask(config, args)),
   );
 
   if (config.graphify.enabled) {
