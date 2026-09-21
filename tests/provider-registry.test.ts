@@ -15,14 +15,13 @@ const EXPECTED_IDS = [
   "caveman",
   "context-mode",
   "open-code-review",
+  "anthropic-skills",
   "owasp-scp",
   "owasp-top10",
   "semgrep",
   "codeql",
-  "bearer",
   "prettier",
   "eslint",
-  "biome",
 ] as const;
 
 describe("provider registry", () => {

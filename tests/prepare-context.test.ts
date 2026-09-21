@@ -47,7 +47,6 @@ function config(memoryEnabled = true, graphEnabled = true): SystemConfig {
     security: {
       semgrep: { enabled: true },
       codeql: { enabled: false },
-      bearer: { enabled: false },
       defaultPolicy: "light",
     },
     validation: { maxBuildAttempts: 3 },

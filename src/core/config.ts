@@ -17,7 +17,6 @@ export interface SystemConfig {
   security: {
     semgrep: { enabled: boolean };
     codeql: { enabled: boolean };
-    bearer: { enabled: boolean };
     defaultPolicy: SecurityPolicy;
   };
   validation: { maxBuildAttempts: number };
@@ -31,13 +30,12 @@ const DEFAULT_CONFIG: SystemConfig = {
   graphify: { enabled: true, preferCodeOnly: true },
   memory: { enabled: true, provider: "claude-mem" },
   ponytail: { enabled: true },
-  caveman: { enabled: false },
+  caveman: { enabled: true },
   contextMode: { enabled: true },
   review: { openCodeReview: { enabled: true } },
   security: {
     semgrep: { enabled: true },
     codeql: { enabled: false },
-    bearer: { enabled: false },
     defaultPolicy: "light",
   },
   validation: { maxBuildAttempts: 3 },
@@ -79,7 +77,6 @@ export function loadConfig(): SystemConfig {
       ...raw.security,
       semgrep: { ...DEFAULT_CONFIG.security.semgrep, ...raw.security?.semgrep },
       codeql: { ...DEFAULT_CONFIG.security.codeql, ...raw.security?.codeql },
-      bearer: { ...DEFAULT_CONFIG.security.bearer, ...raw.security?.bearer },
     },
     validation: { ...DEFAULT_CONFIG.validation, ...raw.validation },
     telemetry: { ...DEFAULT_CONFIG.telemetry, ...raw.telemetry },

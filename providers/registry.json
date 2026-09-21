@@ -32,7 +32,7 @@
       "id": "context-mode",
       "role": "tool-context-control",
       "install": "npm install -g context-mode",
-      "cli": null,
+      "cli": "context-mode",
       "checkout": null
     },
     {
@@ -41,6 +41,13 @@
       "install": "npm install -g @alibaba-group/open-code-review",
       "cli": "ocr",
       "checkout": null
+    },
+    {
+      "id": "anthropic-skills",
+      "role": "task-skills",
+      "install": "ACS Task 14 template at skills/_template (not a full anthropics/skills clone)",
+      "cli": null,
+      "checkout": "skills/_template"
     },
     {
       "id": "owasp-scp",
@@ -66,15 +73,8 @@
     {
       "id": "codeql",
       "role": "deep-security",
-      "install": "manual — install CodeQL CLI if needed",
+      "install": "Download codeql-win64.zip to tools/codeql (see docs/PROVIDERS.md)",
       "cli": "codeql",
-      "checkout": null
-    },
-    {
-      "id": "bearer",
-      "role": "dataflow-security",
-      "install": "manual — install Bearer CLI if needed",
-      "cli": "bearer",
       "checkout": null
     },
     {
@@ -89,13 +89,6 @@
       "role": "js-quality",
       "install": "detect in target project",
       "cli": "eslint",
-      "checkout": null
-    },
-    {
-      "id": "biome",
-      "role": "format-lint-unified",
-      "install": "detect in target project",
-      "cli": "biome",
       "checkout": null
     }
   ]

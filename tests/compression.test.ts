@@ -19,7 +19,6 @@ function base(partial: Partial<SystemConfig> = {}): SystemConfig {
     security: {
       semgrep: { enabled: true },
       codeql: { enabled: false },
-      bearer: { enabled: false },
       defaultPolicy: "light",
     },
     validation: { maxBuildAttempts: 3 },
@@ -29,12 +28,15 @@ function base(partial: Partial<SystemConfig> = {}): SystemConfig {
 }
 
 describe("compression policy", () => {
-  it("prefers context-mode when enabled and caveman off", () => {
+  it("labels context-mode when enabled and caveman off", () => {
     expect(activeCompressionProvider(base())).toBe("context-mode");
-    expect(assertCompressionPolicy(base()).ok).toBe(true);
+    expect(assertCompressionPolicy(base())).toEqual({
+      ok: true,
+      detail: "tool-context: context-mode; output-compression: off",
+    });
   });
 
-  it("uses caveman when contextMode off and caveman on", () => {
+  it("uses caveman for output-compression when enabled", () => {
     const c = base({
       contextMode: { enabled: false },
       caveman: { enabled: true },
@@ -42,11 +44,11 @@ describe("compression policy", () => {
     expect(activeCompressionProvider(c)).toBe("caveman");
     expect(assertCompressionPolicy(c)).toEqual({
       ok: true,
-      detail: "active compression: caveman",
+      detail: "tool-context: off; output-compression: caveman",
     });
   });
 
-  it("supports no active compression provider", () => {
+  it("supports neither provider", () => {
     const c = base({
       contextMode: { enabled: false },
       caveman: { enabled: false },
@@ -54,19 +56,21 @@ describe("compression policy", () => {
     expect(activeCompressionProvider(c)).toBe("none");
     expect(assertCompressionPolicy(c)).toEqual({
       ok: true,
-      detail: "active compression: none",
+      detail: "tool-context: off; output-compression: off",
     });
   });
 
-  it("warns when both enabled (overlap)", () => {
+  it("allows both enabled (separate roles; no overlap)", () => {
     const c = base({
       contextMode: { enabled: true },
       caveman: { enabled: true },
     });
     const result = assertCompressionPolicy(c);
-    expect(result.ok).toBe(false);
-    expect(result.detail.toLowerCase()).toContain("overlap");
-    // Active path still prefers context-mode to avoid double compression
-    expect(activeCompressionProvider(c)).toBe("context-mode");
+    expect(result.ok).toBe(true);
+    expect(result.detail).toBe(
+      "tool-context: context-mode; output-compression: caveman",
+    );
+    expect(result.detail.toLowerCase()).not.toContain("overlap");
+    expect(activeCompressionProvider(c)).toBe("caveman");
   });
 });

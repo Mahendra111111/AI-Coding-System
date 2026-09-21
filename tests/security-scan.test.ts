@@ -27,7 +27,6 @@ vi.mock("node:child_process", () => ({
         ],
       });
     }
-    if (command === "bearer") return JSON.stringify({ findings: [] });
     if (command === "codeql") return "rule,path,line\n";
     return "";
   }),
@@ -49,7 +48,6 @@ function config(
     security: {
       semgrep: { enabled: true },
       codeql: { enabled: false },
-      bearer: { enabled: false },
       defaultPolicy: "light",
       ...security,
     },
@@ -98,7 +96,6 @@ describe("runSecurityScan", () => {
     const result = runSecurityScan(
       config({
         codeql: { enabled: true },
-        bearer: { enabled: true },
         defaultPolicy: "deep",
       }),
       { workspacePath: "C:\\workspace" },
@@ -115,13 +112,8 @@ describe("runSecurityScan", () => {
       ],
       expect.any(Object),
     );
-    expect(execFileSync).toHaveBeenCalledWith(
-      "bearer",
-      ["scan", ".", "--format", "json"],
-      expect.any(Object),
-    );
     expect(result).toContain("=== CodeQL ===");
-    expect(result).toContain("=== Bearer ===");
+    expect(result).not.toContain("=== Bearer ===");
   });
 
   it("skips CodeQL with preparation instructions when no database exists", () => {
@@ -148,14 +140,12 @@ describe("runSecurityScan", () => {
     const result = runSecurityScan(
       config({
         codeql: { enabled: true },
-        bearer: { enabled: false },
         defaultPolicy: "deep",
       }),
       { workspacePath: "C:\\workspace" },
     );
 
     expect(result).toContain("Skipped: CLI unavailable");
-    expect(result).toContain("Skipped: disabled");
     expect(execFileSync).not.toHaveBeenCalled();
   });
 

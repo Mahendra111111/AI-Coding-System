@@ -10,7 +10,7 @@ describe("provider status", () => {
   it("reports every registered provider", () => {
     const statuses = getAllProviderStatuses(loadConfig());
 
-    expect(statuses.length).toBeGreaterThanOrEqual(14);
+    expect(statuses.length).toBeGreaterThanOrEqual(13);
     expect(
       statuses.every(
         (status: ProviderStatusRow) => status.id && status.role,
@@ -18,7 +18,7 @@ describe("provider status", () => {
     ).toBe(true);
   });
 
-  it("surfaces compression overlap", () => {
+  it("allows context-mode and caveman together without overlap", () => {
     const config: SystemConfig = {
       ...loadConfig(),
       contextMode: { enabled: true },
@@ -32,8 +32,19 @@ describe("provider status", () => {
 
     expect(compressionStatuses).toHaveLength(2);
     expect(
+      compressionStatuses.every((status: ProviderStatusRow) =>
+        status.enabledInConfig && status.available,
+      ),
+    ).toBe(true);
+    expect(
       compressionStatuses.some((status: ProviderStatusRow) =>
         status.detail.toLowerCase().includes("overlap"),
+      ),
+    ).toBe(false);
+    expect(
+      compressionStatuses.every((status: ProviderStatusRow) =>
+        status.detail.includes("tool-context: context-mode") &&
+        status.detail.includes("output-compression: caveman"),
       ),
     ).toBe(true);
   });

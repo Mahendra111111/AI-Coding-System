@@ -2,6 +2,11 @@
 
 Anthropic-style skill folders for task-specific agent behavior. Each skill is a directory with a `SKILL.md` file (YAML frontmatter + markdown body).
 
+This is the **Task 14 template layout**, not a full clone of `anthropics/skills`. Discover via MCP:
+
+- `provider_status` → `anthropic-skills`
+- `list_acs_skills`
+
 ## Layout
 
 ```

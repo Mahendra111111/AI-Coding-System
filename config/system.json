@@ -16,7 +16,7 @@
     "enabled": true
   },
   "caveman": {
-    "enabled": false
+    "enabled": true
   },
   "contextMode": {
     "enabled": true
@@ -31,10 +31,7 @@
       "enabled": true
     },
     "codeql": {
-      "enabled": false
-    },
-    "bearer": {
-      "enabled": false
+      "enabled": true
     },
     "defaultPolicy": "light"
   },

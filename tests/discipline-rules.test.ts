@@ -17,7 +17,6 @@ function base(partial: Partial<SystemConfig> = {}): SystemConfig {
     security: {
       semgrep: { enabled: true },
       codeql: { enabled: false },
-      bearer: { enabled: false },
       defaultPolicy: "light",
     },
     validation: { maxBuildAttempts: 3 },
@@ -59,11 +58,10 @@ describe("discipline rules", () => {
 });
 
 describe("compression guidance", () => {
-  it("reports Context Mode as a peer preferred policy", () => {
+  it("reports Context Mode peer policy when caveman is off", () => {
     const guidance = getCavemanGuidance(base());
     expect(guidance.toLowerCase()).toContain("context mode");
-    expect(guidance.toLowerCase()).toContain("separately");
-    expect(guidance.toLowerCase()).toContain("does not invoke");
+    expect(guidance.toLowerCase()).toContain("tool-context");
     expect(guidance.toLowerCase()).toMatch(/caveman.*off|off.*caveman/);
   });
 
@@ -77,6 +75,18 @@ describe("compression guidance", () => {
 
     expect(guidance.toLowerCase()).toContain("caveman");
     expect(guidance.toLowerCase()).toMatch(/terse|brief|compress|filler/);
-    expect(guidance.toLowerCase()).not.toContain("context mode is the preferred");
+    expect(guidance.toLowerCase()).not.toContain("caveman output-compression is off");
+  });
+
+  it("returns caveman guidance when both roles are enabled", () => {
+    const guidance = getCavemanGuidance(
+      base({
+        contextMode: { enabled: true },
+        caveman: { enabled: true },
+      }),
+    );
+    expect(guidance.toLowerCase()).toContain("caveman");
+    expect(guidance.toLowerCase()).toContain("context mode");
+    expect(guidance.toLowerCase()).toMatch(/terse|filler/);
   });
 });

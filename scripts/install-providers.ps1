@@ -200,7 +200,7 @@ if ($SkipHeavy) {
     }
 }
 
-foreach ($tool in @("codeql", "bearer")) {
+foreach ($tool in @("codeql")) {
     if (Find-Executable $tool) {
         Add-Result $tool "detected" "$tool is on PATH"
     } else {

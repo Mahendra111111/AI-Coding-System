@@ -1,27 +1,29 @@
 ---
-description: Use AI Coding System MCP for shared project context and task workflow
+description: Use AI Coding System MCP for shared project context and token-efficient workflow
 alwaysApply: true
 ---
 
 # AI Coding System
 
-Connect **one** project-brain MCP: `ai-coding-system`. Prefer the **user-global** rule `~/.cursor/rules/ai-coding-system-mcp.mdc` (applies in every project).
+Prefer the **user-global** rule `~/.cursor/rules/ai-coding-system-mcp.mdc` (applies in every project). This file is a short project copy of the same workflow.
 
 ## Session start
 
-1. `register_project` or `get_project_context` with absolute workspace path.
-2. Follow stored constraints / handoff; do not re-ask for known architecture.
+1. `register_project` or `get_project_context` (absolute workspace path). Continuing → `get_handoff`.
+2. `compression_guidance` (Caveman terse replies).
+3. Do not re-ask known architecture / handoff.
 
 ## Per task
 
-1. `prepare_context` (opt in memory/graph only if needed).
-2. `discipline_rules` while implementing; `security_refs` when security-relevant.
-3. Targeted `quality_check` / `security_scan` / `review_diff` — not every edit.
+1. `prepare_context` (memory/graph opt-in only).
+2. `discipline_rules`; `security_refs` when security-relevant.
+3. Large I/O → Context Mode (`ctx_execute` / `ctx_execute_file` / `ctx_search`). History → Mem 3-layer search.
+4. Structure → Graphify tools via ACS, not full-repo dumps.
 
 ## Task complete
 
-`finalize_task` with handoff fields and optional checks only when warranted.
+`update_handoff` / `finalize_task`. Quality/security scans at boundaries only.
 
 ## Token discipline
 
-Do not load all providers every turn. Prefer `get_handoff` for fast editor switches.
+No full repo/file pastes. No every-tool-every-turn. Prefer handoff over full context when continuing.

@@ -99,11 +99,15 @@ function runTool(
   }
 }
 
+function toolDirs(config: SystemConfig, cli: string): string[] {
+  return [resolve(config.systemRoot, "tools", cli)];
+}
+
 function semgrepSection(config: SystemConfig, workspacePath: string): string {
   if (!config.security.semgrep.enabled) {
     return "=== Semgrep ===\nSkipped: disabled in configuration.";
   }
-  if (!cliAvailable("semgrep")) {
+  if (!cliAvailable("semgrep", toolDirs(config, "semgrep"))) {
     return "=== Semgrep ===\nSkipped: CLI unavailable.";
   }
   return runTool(
@@ -132,7 +136,7 @@ function deepSections(config: SystemConfig, workspacePath: string): string[] {
 
   if (!config.security.codeql.enabled) {
     sections.push("=== CodeQL ===\nSkipped: disabled in configuration.");
-  } else if (!cliAvailable("codeql")) {
+  } else if (!cliAvailable("codeql", toolDirs(config, "codeql"))) {
     sections.push("=== CodeQL ===\nSkipped: CLI unavailable.");
   } else if (!codeqlDatabase) {
     sections.push(
@@ -152,22 +156,6 @@ function deepSections(config: SystemConfig, workspacePath: string): string[] {
         ],
         workspacePath,
         false,
-      ),
-    );
-  }
-
-  if (!config.security.bearer.enabled) {
-    sections.push("=== Bearer ===\nSkipped: disabled in configuration.");
-  } else if (!cliAvailable("bearer")) {
-    sections.push("=== Bearer ===\nSkipped: CLI unavailable.");
-  } else {
-    sections.push(
-      runTool(
-        "Bearer",
-        "bearer",
-        ["scan", ".", "--format", "json"],
-        workspacePath,
-        true,
       ),
     );
   }

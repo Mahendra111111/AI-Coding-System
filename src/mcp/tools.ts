@@ -22,6 +22,7 @@ import {
   updateHandoff,
   updateProjectState,
 } from "../project/state.js";
+import { formatAcsSkills } from "../providers/acsSkills.js";
 import { getCavemanGuidance } from "../providers/caveman.js";
 import { memoryGet, memorySearch } from "../providers/claudeMem.js";
 import { runOpenCodeReview } from "../providers/openCodeReview.js";
@@ -253,6 +254,13 @@ export function createServer(): McpServer {
   );
 
   server.tool(
+    "list_acs_skills",
+    "List Anthropic-style ACS task skills under skills/ (Task 14 template layout; not a full anthropics/skills clone).",
+    {},
+    async () => textResult(formatAcsSkills(config)),
+  );
+
+  server.tool(
     "memory_search",
     "Search the optional Claude-Mem index and return compact results with observation IDs. Claude-Mem is selective memory only; ACS remains the source of truth.",
     {
@@ -283,14 +291,14 @@ export function createServer(): McpServer {
 
   server.tool(
     "compression_guidance",
-    "Return active compression guidance (context-mode vs caveman) and terse-output hints when caveman is enabled.",
+    "Return compression policy guidance: Caveman terse-output hints when caveman.enabled, plus Context Mode tool-context notes. Both roles may be enabled together.",
     {},
     async () => textResult(getCavemanGuidance(config)),
   );
 
   server.tool(
     "quality_detect",
-    "Detect Prettier, ESLint, and Biome configuration in a workspace. Reports formatter/linter and conflicts.",
+    "Detect Prettier and ESLint configuration in a workspace. Reports formatter/linter and conflicts.",
     {
       workspacePath: z.string().describe("Absolute workspace path"),
     },
@@ -300,7 +308,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "quality_check",
-    "Run non-conflicting quality tools detected in the workspace (Prettier/ESLint/Biome). Output truncated to 4k chars.",
+    "Run non-conflicting quality tools detected in the workspace (Prettier/ESLint). Output truncated to 4k chars.",
     {
       workspacePath: z.string().describe("Absolute workspace path"),
     },
@@ -366,7 +374,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "security_scan",
-    "Run the configured security scanners by policy. Light runs Semgrep; normal adds review guidance; deep also runs enabled CodeQL and Bearer. Findings are capped at 3k characters.",
+    "Run the configured security scanners by policy. Light runs Semgrep; normal adds review guidance; deep also runs enabled CodeQL. Findings are capped at 3k characters.",
     {
       workspacePath: z.string().describe("Absolute workspace path"),
       policy: z.enum(["light", "normal", "deep"]).optional(),

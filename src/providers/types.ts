@@ -8,10 +8,9 @@ export type ProviderRole =
   | "security-knowledge"
   | "fast-security"
   | "deep-security"
-  | "dataflow-security"
   | "formatting"
   | "js-quality"
-  | "format-lint-unified";
+  | "task-skills";
 
 export interface ProviderEntry {
   id: string;

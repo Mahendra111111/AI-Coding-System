@@ -125,7 +125,7 @@ C:\AI-Coding-System\
   config\system.json   System config
   templates\           Seed Markdown for new projects
   skills\              ACS task skills
-  projects\<id>\       Per-project brain
+  projects\<id>\       Per-project brain (local only — not on GitHub)
     project.json
     context\
       PROJECT_STATE.md
@@ -133,9 +133,10 @@ C:\AI-Coding-System\
       DECISIONS.md
       CONSTRAINTS.md
       ARCHITECTURE.md
-  state\registry.json  Index of all registered projects
+  state\registry.json  Local index of registered projects (gitignored)
 ```
 
+`projects/` and `state/registry.json` stay on each machine so every user registers and manages their own products. They are not published to the shared ACS repo.
 ### Project identity
 
 ```

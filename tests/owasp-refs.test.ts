@@ -19,7 +19,6 @@ function base(partial: Partial<SystemConfig> = {}): SystemConfig {
     security: {
       semgrep: { enabled: true },
       codeql: { enabled: false },
-      bearer: { enabled: false },
       defaultPolicy: "light",
     },
     validation: { maxBuildAttempts: 3 },
