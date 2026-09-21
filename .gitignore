@@ -1,9 +1,13 @@
 node_modules/
 dist/
-projects/*/temp/
-projects/*/cache/
+# Per-user project brains — local only, never publish to GitHub
+projects/*
+!projects/.gitkeep
+!projects/README.md
+state/registry.json
 temp-smoke-workspace/
 tools/venvs/
+tools/codeql/
 providers/skills/*
 !providers/skills/README.md
 providers/refs/
