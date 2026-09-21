@@ -226,7 +226,6 @@ Then use the `graph_index` / `graph_query` MCP tools.
 [MIT](./LICENSE)
 
 ---
-
 <sub>
 Built for developers juggling more than one AI coding editor on the same project.
 </sub>
