@@ -4,7 +4,9 @@ import { join, resolve } from "node:path";
 import type { SystemConfig } from "../core/config.js";
 import { listProjects } from "../project/register.js";
 import { assertCompressionPolicy } from "./compression.js";
+import { probeNextSeo } from "./nextSeo.js";
 import { loadProviderRegistry } from "./registry.js";
+import { probeReticle } from "./reticle.js";
 import type { ProviderEntry, ProviderRole } from "./types.js";
 import { cliAvailable, projectLocalCli } from "./which.js";
 
@@ -36,6 +38,12 @@ function enabledInConfig(config: SystemConfig, id: string): boolean {
       return config.security.semgrep.enabled;
     case "codeql":
       return config.security.codeql.enabled;
+    case "von":
+      return config.von.enabled;
+    case "reticle":
+      return config.reticle.enabled;
+    case "next-seo":
+      return config.nextSeo.enabled;
     default:
       return true;
   }
@@ -184,6 +192,30 @@ function availability(
       return probeClaudeMem();
     case "context-mode":
       return probeContextMode();
+    case "von": {
+      const base = (
+        process.env.VON_BASE_URL ||
+        config.von.baseUrl ||
+        "http://127.0.0.1:8000"
+      ).replace(/\/+$/, "");
+      const auto = config.von.autoStart
+        ? "autoStart on decide_tools"
+        : "manual start (npm run von:serve)";
+      return {
+        available: true,
+        detail: `Client configured for ${base}; ${auto}`,
+      };
+    }
+    case "reticle":
+      return probeReticle();
+    case "next-seo": {
+      const projects = listProjects(config);
+      for (const project of projects) {
+        const probe = probeNextSeo(project.workspacePath);
+        if (probe.available) return probe;
+      }
+      return probeNextSeo(projects[0]?.workspacePath);
+    }
     default:
       break;
   }

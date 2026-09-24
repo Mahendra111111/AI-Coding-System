@@ -50,6 +50,15 @@ function config(memoryEnabled = true, graphEnabled = true): SystemConfig {
       defaultPolicy: "light",
     },
     validation: { maxBuildAttempts: 3 },
+    von: {
+      enabled: true,
+      baseUrl: "http://127.0.0.1:8000",
+      confidenceThreshold: 0.75,
+      autoStart: false,
+      model: "von-1.1",
+    },
+    reticle: { enabled: true },
+    nextSeo: { enabled: true },
     telemetry: { enabled: false },
   };
 }

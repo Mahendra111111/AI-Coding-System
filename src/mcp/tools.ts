@@ -12,6 +12,7 @@ import {
 import { formatGitSummary, getGitSummary } from "../git/summary.js";
 import { finalizeTask } from "../orchestrator/finalizeTask.js";
 import { prepareContext } from "../orchestrator/prepareContext.js";
+import { decideGate, decideTools } from "../decision/decideTools.js";
 import {
   listProjects,
   registerProject,
@@ -32,6 +33,8 @@ import {
   detectQualityStack,
   runQualityCheck,
 } from "../providers/quality.js";
+import { getReticleGuidance } from "../providers/reticle.js";
+import { getSeoGuidance } from "../providers/nextSeo.js";
 import { getAllProviderStatuses } from "../providers/status.js";
 import { runSecurityScan } from "../security/scan.js";
 
@@ -251,6 +254,85 @@ export function createServer(): McpServer {
     {},
     async () =>
       textResult(JSON.stringify(getAllProviderStatuses(config), null, 2)),
+  );
+
+  server.tool(
+    "decide_tools",
+    "Use Von (System One) to pick the next ACS tool or peer action for a task. Call when unsure which tool to use; then call only the recommended tool (or Reticle peer tools if recommended). If escalate is true, choose manually.",
+    {
+      task: z.string().min(1).describe("Current task / user intent"),
+      workspacePath: z
+        .string()
+        .optional()
+        .describe("Optional workspace for project-state hint"),
+      hints: z
+        .string()
+        .optional()
+        .describe("Optional extra constraints for the decision"),
+    },
+    async ({ task, workspacePath, hints }) =>
+      textResult(
+        JSON.stringify(
+          await decideTools(config, { task, workspacePath, hints }),
+          null,
+          2,
+        ),
+      ),
+  );
+
+  server.tool(
+    "decide_gate",
+    "Binary Von (noul) confidence gate for a yes/no question over state. escalate is true when probability is below von.confidenceThreshold.",
+    {
+      state: z.string().min(1).describe("State document / task description"),
+      question: z
+        .string()
+        .min(1)
+        .describe("Yes/no question, e.g. Should we run a security scan?"),
+    },
+    async ({ state, question }) =>
+      textResult(
+        JSON.stringify(await decideGate(config, { state, question }), null, 2),
+      ),
+  );
+
+  server.tool(
+    "reticle_guidance",
+    "Return Reticle peer-MCP setup checklist and verification loop. Reticle tools are not proxied through ACS; use the reticle MCP server on the owned app.",
+    {},
+    async () => textResult(getReticleGuidance(config)),
+  );
+
+  server.tool(
+    "seo_guidance",
+    "SEO-first Next.js guidance using next-seo. Pass user keywords so agents ship generateMetadata + JSON-LD in the same change as content (not later).",
+    {
+      keywords: z
+        .string()
+        .optional()
+        .describe(
+          "Comma-separated primary/secondary keywords from the user",
+        ),
+      workspacePath: z
+        .string()
+        .optional()
+        .describe("Next.js app workspace to probe for next-seo"),
+      pageType: z
+        .enum([
+          "article",
+          "organization",
+          "product",
+          "faq",
+          "howto",
+          "website",
+        ])
+        .optional()
+        .describe("Content type for JSON-LD component selection"),
+    },
+    async ({ keywords, workspacePath, pageType }) =>
+      textResult(
+        getSeoGuidance(config, { keywords, workspacePath, pageType }),
+      ),
   );
 
   server.tool(

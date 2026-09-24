@@ -49,6 +49,10 @@ export function providersDir(config: SystemConfig): string {
   return join(config.systemRoot, "providers");
 }
 
+export function skillsDir(config: SystemConfig): string {
+  return join(config.systemRoot, "skills");
+}
+
 export function reviewsDir(config: SystemConfig, projectId: string): string {
   return join(projectDir(config, projectId), "reviews");
 }

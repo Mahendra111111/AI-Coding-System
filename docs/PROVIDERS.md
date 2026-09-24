@@ -30,10 +30,26 @@ are reported but do not fail the script, so it is safe to rerun.
 | CodeQL | Deep security analysis | Install CLI under `tools/codeql` (Windows: download `codeql-win64.zip` from [codeql-cli-binaries](https://github.com/github/codeql-cli-binaries/releases)). ACS probes `tools/codeql` and PATH. Prepare a DB with `codeql database create`, then set `CODEQL_DATABASE` or `<workspace>/codeql-db`. |
 | Prettier | Formatting | Detected on PATH or in registered project `node_modules/.bin` (including `apps/*` / `packages/*`). |
 | ESLint | JavaScript quality | Detected on PATH or in registered project `node_modules/.bin` (including `apps/*` / `packages/*`). |
+| Von | Decision routing (System One) | Real ML model (not text guidance like Caveman). Install once: `pip install git+https://github.com/wfzyx/von.git`. With `von.autoStart: true` (default), ACS **starts `von serve` in the background** on the first `decide_tools` / `decide_gate` call if nothing is listening — no manual terminal required. Override URL with `VON_BASE_URL` or `config.von.baseUrl`. Optional manual: `npm run von:serve`. First cold start may download Hugging Face weights (~1.5GB+). |
+| Reticle | Runtime UI verification | **Peer MCP** (like Context Mode), not proxied through ACS. Machine: `npm install -g @reticlehq/server` then `npx @reticlehq/server setup mcp` (or [Reticle installer](https://github.com/reticlehq/reticle)). Per owned app: `npx @reticlehq/server init`. ACS exposes `reticle_guidance` + Von option `reticle_verify`; agents use `reticle_*` tools on the Reticle server. |
+| Next SEO | SEO-first Next.js content | **Not** an ACS runtime dependency. Install in each Next.js app: `npm install next-seo` ([garmeeh/next-seo](https://github.com/garmeeh/next-seo)). ACS skill `skills/next-seo` + MCP `seo_guidance` (pass `keywords` / `pageType` / `workspacePath`). Agents must add `generateMetadata` + JSON-LD in the **same change** as page content. |
 
 The generated checkouts under `providers/skills/` and `providers/refs/` are
 local, ignored dependencies. `providers/registry.json` remains tracked as the
 provider manifest.
+
+### Von + Reticle workflow
+
+1. When unsure which ACS tool to call → `decide_tools` (Von).
+2. If the decision is `reticle_verify` → use the **Reticle** peer MCP against the running app (`reticle_snapshot` → `reticle_act_sequence` → `reticle_act_and_wait` / `reticle_assert`).
+3. Call `reticle_guidance` for the checklist without leaving ACS.
+
+### SEO-first content workflow
+
+1. User supplies keywords (or agent asks once).
+2. Call `seo_guidance` with `keywords`, `workspacePath`, `pageType`.
+3. In the **app** workspace: ensure `next-seo` is installed; ship page content + metadata + JSON-LD together.
+4. Do not create “random” pages first and bolt SEO on later.
 
 ## Local project brains (not in Git)
 

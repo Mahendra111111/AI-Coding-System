@@ -90,6 +90,27 @@
       "install": "detect in target project",
       "cli": "eslint",
       "checkout": null
+    },
+    {
+      "id": "von",
+      "role": "decision-routing",
+      "install": "pip install git+https://github.com/wfzyx/von.git then: von serve --model von-1.1 --port 8000",
+      "cli": null,
+      "checkout": null
+    },
+    {
+      "id": "reticle",
+      "role": "runtime-verification",
+      "install": "npm install -g @reticlehq/server; npx @reticlehq/server setup mcp; per app: npx @reticlehq/server init",
+      "cli": null,
+      "checkout": null
+    },
+    {
+      "id": "next-seo",
+      "role": "seo",
+      "install": "In each Next.js app: npm install next-seo (https://github.com/garmeeh/next-seo). ACS skill: skills/next-seo",
+      "cli": null,
+      "checkout": "skills/next-seo"
     }
   ]
 }

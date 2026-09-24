@@ -10,12 +10,15 @@ describe("provider status", () => {
   it("reports every registered provider", () => {
     const statuses = getAllProviderStatuses(loadConfig());
 
-    expect(statuses.length).toBeGreaterThanOrEqual(13);
+    expect(statuses.length).toBeGreaterThanOrEqual(16);
     expect(
       statuses.every(
         (status: ProviderStatusRow) => status.id && status.role,
       ),
     ).toBe(true);
+    expect(statuses.some((s) => s.id === "von")).toBe(true);
+    expect(statuses.some((s) => s.id === "reticle")).toBe(true);
+    expect(statuses.some((s) => s.id === "next-seo")).toBe(true);
   });
 
   it("allows context-mode and caveman together without overlap", () => {

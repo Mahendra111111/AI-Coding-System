@@ -45,6 +45,7 @@ Editors configure **only** `ai-coding-system`. External providers (Claude-Mem, G
 |-------|-------|
 | Project | `register_project`, `get_project_context`, `get_handoff`, `update_handoff`, `update_project_state`, `list_projects` |
 | Orchestrate | `prepare_context`, `finalize_task` |
+| Decide | `decide_tools`, `decide_gate`, `reticle_guidance`, `seo_guidance` |
 | Graph | `graph_index`, `graph_query`, `graph_explain` |
 | Memory | `memory_search`, `memory_timeline`, `memory_get` |
 | Quality | `quality_detect`, `quality_check` |
@@ -52,6 +53,8 @@ Editors configure **only** `ai-coding-system`. External providers (Claude-Mem, G
 | Review | `review_diff`, `review_scan` |
 | Policy | `discipline_rules`, `compression_guidance` |
 | Meta | `doctor`, `provider_status`, `get_git_summary` |
+
+`decide_tools` uses the local Von System One server to pick the next ACS tool (or Reticle peer verification). Reticle itself remains a **peer MCP**; ACS does not proxy `reticle_*` tools. `seo_guidance` steers agents to install [next-seo](https://github.com/garmeeh/next-seo) in the **target Next.js app** and ship metadata + JSON-LD with content using user keywords.
 
 `get_project_context` does **not** auto-merge Claude-Mem or full provider dumps. Memory and graph are opt-in via `memory_*` or `prepare_context` flags.
 

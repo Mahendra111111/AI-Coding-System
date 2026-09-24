@@ -98,12 +98,13 @@ Want a lightweight nudge so your editor calls these automatically? See the [Curs
 
 ## MCP Tools
 
-**24 tools, one server (`ai-coding-system`):**
+**28 tools, one server (`ai-coding-system`):**
 
 | Group | Tools |
 |---|---|
 | **Project** | `register_project`, `get_project_context`, `get_handoff`, `update_handoff`, `update_project_state`, `list_projects` |
 | **Orchestrate** | `prepare_context`, `finalize_task` |
+| **Decide** | `decide_tools`, `decide_gate`, `reticle_guidance`, `seo_guidance` |
 | **Graph** | `graph_index`, `graph_query`, `graph_explain` |
 | **Memory** | `memory_search`, `memory_get` |
 | **Discipline** | `discipline_rules`, `compression_guidance` |
@@ -113,6 +114,8 @@ Want a lightweight nudge so your editor calls these automatically? See the [Curs
 | **Meta** | `doctor`, `provider_status`, `get_git_summary` |
 
 > Editor showing only ~11 tools? Rebuild (`scripts\build.ps1`) and reload MCP.
+
+Reticle UI verification uses a **peer** MCP (`npx @reticlehq/server mcp`), not ACS-proxied tools. See [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
 ---
 

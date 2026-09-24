@@ -180,6 +180,9 @@ Install-ShallowClone "OWASP SCP" "https://github.com/OWASP/secure-coding-practic
 Install-ShallowClone "OWASP Top 10" "https://github.com/OWASP/Top10.git" (Join-Path $Root "providers\refs\owasp-top10")
 
 Add-Result "Claude-Mem" "manual" "Run: npx claude-mem install --provider host"
+Add-Result "Von" "manual" "pip install git+https://github.com/wfzyx/von.git ; von serve --model von-1.1 --port 8000"
+Add-Result "Reticle" "manual" "Peer MCP: npm install -g @reticlehq/server ; npx @reticlehq/server setup mcp ; per app: npx @reticlehq/server init"
+Add-Result "Next-SEO" "manual" "In each Next.js app: npm install next-seo ; ACS: seo_guidance + skills/next-seo"
 
 if ($SkipHeavy) {
     Add-Result "Semgrep" "skipped" "-SkipHeavy was specified"

@@ -14,6 +14,16 @@ export interface SystemConfig {
   caveman: { enabled: boolean };
   contextMode: { enabled: boolean };
   review: { openCodeReview: { enabled: boolean } };
+  von: {
+    enabled: boolean;
+    baseUrl: string;
+    confidenceThreshold: number;
+    /** Spawn `von serve` in the background on first decide_tools if not listening */
+    autoStart: boolean;
+    model: string;
+  };
+  reticle: { enabled: boolean };
+  nextSeo: { enabled: boolean };
   security: {
     semgrep: { enabled: boolean };
     codeql: { enabled: boolean };
@@ -33,6 +43,15 @@ const DEFAULT_CONFIG: SystemConfig = {
   caveman: { enabled: true },
   contextMode: { enabled: true },
   review: { openCodeReview: { enabled: true } },
+  von: {
+    enabled: true,
+    baseUrl: "http://127.0.0.1:8000",
+    confidenceThreshold: 0.75,
+    autoStart: true,
+    model: "von-1.1",
+  },
+  reticle: { enabled: true },
+  nextSeo: { enabled: true },
   security: {
     semgrep: { enabled: true },
     codeql: { enabled: false },
@@ -72,6 +91,9 @@ export function loadConfig(): SystemConfig {
         ...raw.review?.openCodeReview,
       },
     },
+    von: { ...DEFAULT_CONFIG.von, ...raw.von },
+    reticle: { ...DEFAULT_CONFIG.reticle, ...raw.reticle },
+    nextSeo: { ...DEFAULT_CONFIG.nextSeo, ...raw.nextSeo },
     security: {
       ...DEFAULT_CONFIG.security,
       ...raw.security,

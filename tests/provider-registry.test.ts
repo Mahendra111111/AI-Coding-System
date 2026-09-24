@@ -22,6 +22,9 @@ const EXPECTED_IDS = [
   "codeql",
   "prettier",
   "eslint",
+  "von",
+  "reticle",
+  "next-seo",
 ] as const;
 
 describe("provider registry", () => {

@@ -10,7 +10,10 @@ export type ProviderRole =
   | "deep-security"
   | "formatting"
   | "js-quality"
-  | "task-skills";
+  | "task-skills"
+  | "decision-routing"
+  | "runtime-verification"
+  | "seo";
 
 export interface ProviderEntry {
   id: string;
