@@ -29,7 +29,13 @@ Or run `install.ps1` which merges this entry (backs up existing file).
 
 Restart Cursor or reload MCP servers after changing config.
 
-Optional rule: copy [examples/cursor-rule.mdc](../examples/cursor-rule.mdc) into `.cursor/rules/`.
+**Project rules (required for matching results):** this repo ships [`.cursor/rules/ai-coding-system-mcp.mdc`](../.cursor/rules/ai-coding-system-mcp.mdc). Opening ACS in Cursor loads it automatically. To apply the same rule to every workspace on the machine:
+
+```powershell
+Copy-Item -Force "C:\AI-Coding-System\.cursor\rules\ai-coding-system-mcp.mdc" "$env:USERPROFILE\.cursor\rules\ai-coding-system-mcp.mdc"
+```
+
+Details: [`.cursor/README.md`](../.cursor/README.md).
 
 ## Claude Code
 

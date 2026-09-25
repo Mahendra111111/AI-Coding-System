@@ -92,7 +92,7 @@ Or point at the full path:
 2. Work using the compact context returned — architecture, handoff, constraints, decisions
 3. After meaningful work, call `update_handoff` (and optionally `update_project_state`)
 
-Want a lightweight nudge so your editor calls these automatically? See the [Cursor rule example](examples/cursor-rule.mdc).
+Want the same agent workflow on every install? Cursor rules ship in **[`.cursor/rules/`](.cursor/rules/)** (always-apply ACS MCP prompt). See [`.cursor/README.md`](.cursor/README.md). Optional: copy that rule into `%USERPROFILE%\.cursor\rules\` so it applies to all workspaces.
 
 ---
 

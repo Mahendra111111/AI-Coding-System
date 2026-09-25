@@ -1,32 +1,16 @@
 ---
-description: Use AI Coding System MCP for shared project context and token-efficient workflow
-alwaysApply: true
+description: Pointer — full ACS Cursor rule lives in .cursor/rules/
+alwaysApply: false
 ---
 
-# AI Coding System
+# AI Coding System (example pointer)
 
-Prefer the **user-global** rule `~/.cursor/rules/ai-coding-system-mcp.mdc` (applies in every project). This file is a short project copy of the same workflow.
+**Canonical rule (use this):** [`.cursor/rules/ai-coding-system-mcp.mdc`](../.cursor/rules/ai-coding-system-mcp.mdc)
 
-## Session start
+That file ships with the repo so every installer gets the same performance workflow (Von `decide_tools`, SEO-first, Reticle, token discipline, Caveman).
 
-1. `register_project` or `get_project_context` (absolute workspace path). Continuing → `get_handoff`.
-2. `compression_guidance` (Caveman terse replies).
-3. Do not re-ask known architecture / handoff.
+To apply on every Cursor workspace on a machine:
 
-## Per task
-
-1. If unsure which ACS tool to call → `decide_tools` (Von), then call only the recommended tool.
-2. `prepare_context` (memory/graph opt-in only).
-3. `discipline_rules`; `security_refs` when security-relevant.
-4. Large I/O → Context Mode (`ctx_execute` / `ctx_execute_file` / `ctx_search`). History → Mem 3-layer search.
-5. Structure → Graphify tools via ACS, not full-repo dumps.
-6. Owned running UI → Reticle peer MCP after `decide_tools` returns `reticle_verify` (or call `reticle_guidance`).
-7. Next.js content/pages → `seo_guidance` with user keywords; install `next-seo` in the app and ship SEO with the content (not later).
-
-## Task complete
-
-`update_handoff` / `finalize_task`. Quality/security scans at boundaries only.
-
-## Token discipline
-
-No full repo/file pastes. No every-tool-every-turn. Prefer handoff over full context when continuing.
+```powershell
+Copy-Item -Force ".\.cursor\rules\ai-coding-system-mcp.mdc" "$env:USERPROFILE\.cursor\rules\ai-coding-system-mcp.mdc"
+```

@@ -124,6 +124,18 @@ if (-not $SkipCursorMcpMerge) {
     ($newJson | ConvertTo-Json -Depth 10) | Set-Content $CursorMcp -Encoding UTF8
     Write-Host "Created $CursorMcp" -ForegroundColor Green
   }
+
+  # Ship the same always-apply ACS Cursor rule to the user-global rules folder.
+  $RuleSrc = Join-Path $Root ".cursor\rules\ai-coding-system-mcp.mdc"
+  $RulesDir = Join-Path $env:USERPROFILE ".cursor\rules"
+  $RuleDest = Join-Path $RulesDir "ai-coding-system-mcp.mdc"
+  if (Test-Path $RuleSrc) {
+    if (-not (Test-Path $RulesDir)) { New-Item -ItemType Directory -Path $RulesDir | Out-Null }
+    Copy-Item -Force $RuleSrc $RuleDest
+    Write-Host "Installed Cursor rule: $RuleDest" -ForegroundColor Green
+  } else {
+    Write-Host "Cursor rule missing at $RuleSrc (skip)" -ForegroundColor Yellow
+  }
 }
 
 Write-Host ""
@@ -134,4 +146,5 @@ Write-Host ""
 Write-Host "Install complete." -ForegroundColor Cyan
 Write-Host "1. Restart Cursor (or reload MCP servers)."
 Write-Host "2. Open a project on D: and ask the agent to call get_project_context."
+Write-Host "3. Project rules also live in .cursor\rules\ (same prompts for every clone)."
 Write-Host "See docs\CONNECT-EDITORS.md for other editors."

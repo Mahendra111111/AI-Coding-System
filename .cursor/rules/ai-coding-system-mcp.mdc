@@ -1,0 +1,51 @@
+---
+description: ACS workflow — project brain, token savings, Von decide_tools, SEO-first, Reticle, Context Mode, Caveman
+alwaysApply: true
+---
+
+# AI Coding System — required workflow
+
+Use the **`ai-coding-system`** / **`user-ai-coding-system`** MCP on every workspace. Project brains live under the ACS system root (`projects/<id>/`). Source code stays in the open workspace.
+
+Never ask the user to re-explain architecture, decisions, or handoff available via MCP. Never paste full repos, full files, or giant logs into prompts.
+
+## Session start (mandatory)
+
+1. `register_project` (first time) or `get_project_context` with absolute `workspacePath`. Continuing work → `get_handoff` only.
+2. `compression_guidance` — reply terse (Caveman). Keep code, paths, commands, and errors exact.
+3. If Claude-Mem tools fail → tell the user: `npx claude-mem start`.
+
+## Per coding task
+
+1. If unsure which ACS tool to call → `decide_tools` (Von), then call **only** the recommended tool (or Reticle / SEO peer flow if recommended).
+2. `prepare_context` with task + acceptance (`includeMemory` / `includeGraph` only if needed; default off).
+3. `discipline_rules` (Ponytail) before writing code — minimum solution only.
+4. Structure/symbols → `graph_index` once if needed, then `graph_query` / `graph_explain` (not full-repo reads).
+5. Security-touching changes → `security_refs` for the relevant topic only.
+6. Owned running UI verification → after `decide_tools` returns `reticle_verify`, use Reticle peer MCP (`reticle_guidance` checklist). Do not claim UI done without a Reticle verdict.
+7. Next.js pages/content → `seo_guidance` with user keywords; install `next-seo` **in the app** and ship `generateMetadata` + JSON-LD **in the same change** (not later).
+
+## Token savings (mandatory)
+
+| Need | Do this | Not this |
+|------|---------|----------|
+| Large file / log / command output | Context Mode: `ctx_execute`, `ctx_execute_file`, `ctx_batch_execute` — log only needed lines | Read whole file / paste dumps into chat |
+| Reusable docs / fetch content | `ctx_index` then `ctx_search` | Re-paste the same content |
+| Prior session history | Mem: `memory_search` → IDs → `memory_get` (or peer Mem search → timeline → observations) | Full memory dump |
+| Agent replies | Follow `compression_guidance` | Long status essays |
+| End of meaningful work | `update_handoff` / `finalize_task` | Leave next session blind |
+
+Optional: check `ctx_stats` after heavy Context Mode use.
+
+## Task boundaries (not every edit)
+
+- `quality_check` / `security_scan` / `review_diff` at task end or before ship.
+- `finalize_task` with handoff fields when the task is done.
+- Do **not** call every ACS tool every turn.
+
+## Source of truth
+
+- Durable state: ACS handoff / project state / decisions / constraints.
+- Context Mode = tool-output sandbox (peer MCP). Caveman = terse agent output. Claude-Mem / Graphify = providers via ACS.
+- Von = decision routing (`decide_tools`); with `von.autoStart` ACS can start the local server — do not ask the user to babysit `von serve` unless auto-start fails.
+- If tools missing: `doctor` / `provider_status`. Rebuild ACS (`npm run build`) and reload MCP.
