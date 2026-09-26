@@ -4,6 +4,7 @@ import { loadConfig } from "../core/config.js";
 import { buildProjectContext } from "../context/buildContext.js";
 import { runDoctor } from "../doctor.js";
 import {
+  ensureGraphIndexed,
   graphExplain,
   graphExtract,
   graphQuery,
@@ -243,7 +244,7 @@ export function createServer(): McpServer {
     async () => {
       const result = runDoctor(config);
       return textResult(
-        `${result.ok ? "HEALTHY" : "ISSUES FOUND"}\n\n${result.summary}`,
+        `${result.ok ? "HEALTHY" : "ISSUES FOUND"}\n\n${result.summary}\n\n${result.remediation}`,
       );
     },
   );
@@ -305,7 +306,7 @@ export function createServer(): McpServer {
 
   server.tool(
     "seo_guidance",
-    "SEO-first Next.js guidance using next-seo. Pass user keywords so agents ship generateMetadata + JSON-LD in the same change as content (not later).",
+    "ACS SEO Engine + next-seo wiring. Pass user keywords/pageType/workspacePath. Returns people-first, intent-driven SEO instructions (SEO-ENGINE.md) and Next.js metadata/JSON-LD checklist. Does not promise rankings.",
     {
       keywords: z
         .string()
@@ -507,11 +508,20 @@ export function createServer(): McpServer {
       }
       if (!isGraphifyAvailable()) {
         return textResult(
-          "Graphify not installed. Install: uv tool install graphifyy\nThen: graphify extract . --code-only",
+          "Graphify not installed. Re-run: powershell -ExecutionPolicy Bypass -File <ACS_ROOT>\\install.ps1",
         );
       }
       registerProject(config, { workspacePath });
-      return textResult(graphQuery(workspacePath, question));
+      const ensured = ensureGraphIndexed(
+        workspacePath,
+        config.graphify.preferCodeOnly,
+      );
+      const answer = graphQuery(workspacePath, question);
+      return textResult(
+        ensured.ranExtract
+          ? `${ensured.detail}\n\n${answer}`
+          : answer,
+      );
     },
   );
 
@@ -530,16 +540,25 @@ export function createServer(): McpServer {
       }
       if (!isGraphifyAvailable()) {
         return textResult(
-          "Graphify not installed. Install: uv tool install graphifyy",
+          "Graphify not installed. Re-run: powershell -ExecutionPolicy Bypass -File <ACS_ROOT>\\install.ps1",
         );
       }
-      return textResult(graphExplain(workspacePath, symbol));
+      const ensured = ensureGraphIndexed(
+        workspacePath,
+        config.graphify.preferCodeOnly,
+      );
+      const answer = graphExplain(workspacePath, symbol);
+      return textResult(
+        ensured.ranExtract
+          ? `${ensured.detail}\n\n${answer}`
+          : answer,
+      );
     },
   );
 
   server.tool(
     "graph_index",
-    "Build or refresh Graphify index for a workspace (code-only by default).",
+    "Build or refresh Graphify index for a workspace (code-only by default). Canonical store: graphify-out/graph.json.",
     {
       workspacePath: z.string(),
       codeOnly: z.boolean().optional().default(true),
@@ -552,7 +571,7 @@ export function createServer(): McpServer {
       }
       if (!isGraphifyAvailable()) {
         return textResult(
-          "Graphify not installed. Install: uv tool install graphifyy",
+          "Graphify not installed. Re-run: powershell -ExecutionPolicy Bypass -File <ACS_ROOT>\\install.ps1",
         );
       }
       return textResult(graphExtract(workspacePath, codeOnly ?? true));

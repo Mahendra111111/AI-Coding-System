@@ -23,7 +23,7 @@ Editors configure **one project-brain MCP server** (`ai-coding-system`) for stat
 }
 ```
 
-Or run `install.ps1` which merges this entry (backs up existing file).
+Or run `install.ps1` which merges ACS + peer MCPs (backs up existing file), links the ACS CLI, and installs full-potential providers in one command.
 
 **Project-local:** create `.cursor/mcp.json` in a workspace with the same snippet.
 

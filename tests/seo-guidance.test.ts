@@ -58,6 +58,10 @@ describe("next-seo guidance", () => {
     expect(text).toMatch(/ArticleJsonLd/);
     expect(text).toMatch(/npm install next-seo/);
     expect(text).toMatch(/same change/i);
+    expect(text).toMatch(/SEO ENGINE/i);
+    expect(text).toMatch(/people-first/i);
+    expect(text).toMatch(/Never promise/i);
+    expect(text).toMatch(/TOPICAL COVERAGE/i);
   });
 
   it("respects nextSeo.enabled=false", () => {

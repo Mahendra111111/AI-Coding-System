@@ -54,7 +54,7 @@ export const FAMILY_CRITERIA: Record<DecisionFamily, string> = {
   meta: "Doctor health, provider status, or git summary",
   verify_ui:
     "Verify a running owned web/desktop app with Reticle peer MCP (runtime truth)",
-  seo: "Add or update Next.js SEO with next-seo and user keywords while creating content",
+  seo: "ACS SEO Engine: people-first intent SEO + next-seo metadata/JSON-LD with target keywords (no ranking promises)",
   no_tool: "Implement or edit code without calling an ACS tool first",
 };
 
@@ -172,8 +172,8 @@ export const TOOL_CATALOG: CatalogEntry[] = [
     id: "seo_guidance",
     family: "seo",
     label:
-      "SEO-first Next.js content: next-seo JSON-LD + generateMetadata using keywords",
-    next: "Call seo_guidance with keywords, workspacePath, and pageType; install next-seo in the app and ship SEO with the content",
+      "ACS SEO Engine + next-seo: intent-driven copy, generateMetadata, JSON-LD from target keywords",
+    next: "Call seo_guidance with keywords, workspacePath, and pageType; follow SEO-ENGINE.md; install next-seo in the app; ship SEO with content",
   },
   {
     id: "no_tool",

@@ -8,7 +8,7 @@ export function graphifyStatus(): { available: boolean; hint: string } {
     available,
     hint: available
       ? "graphify CLI ready"
-      : "Install with: uv tool install graphifyy",
+      : "Re-run install.ps1 (or: uv tool install graphifyy)",
   };
 }
 

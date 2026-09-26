@@ -37,14 +37,18 @@ Your source code stays exactly where it already lives. Only the project's "brain
 
 ## Quick Start
 
-### Install (Windows)
+### Install (Windows) — one command
 
 ```powershell
 cd C:\AI-Coding-System
 powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```
 
-Restart your editor (or reload MCP) afterwards. The installer merges into `%USERPROFILE%\.cursor\mcp.json`, with a backup taken first.
+Or: `npm run setup`
+
+This **single** command builds ACS, links the CLI (`ai-coding-mcp` / `acs-doctor`), installs full-potential providers (Graphify, Caveman, Ponytail, Von, Semgrep, CodeQL soft, peers), and merges Cursor MCP + rules. Do not run separate install prompts per provider.
+
+Restart your editor (or reload MCP) afterwards. Gaps later → re-run the same `install.ps1` only.
 
 <details>
 <summary><strong>node / npm not recognized?</strong></summary>
@@ -161,20 +165,22 @@ Move a folder that keeps the same git remote, and it resolves to the **same** `p
 
 ## Providers
 
-External tools are thin adapters — you configure only `ai-coding-system` in your editor, and it invokes providers on demand:
+External tools are thin adapters — configure `ai-coding-system` (plus optional peer MCPs merged by install). One `install.ps1` installs CLIs and checkouts; see [docs/PROVIDERS.md](docs/PROVIDERS.md).
 
 | Provider | Role |
 |---|---|
-| **Graphify** | Code-structure graph indexing |
+| **Graphify** | Code-structure graph (`graphify-out/graph.json`) |
 | **Claude-Mem** | Historical memory across sessions |
 | **Ponytail** | Implementation-discipline rules |
 | **Caveman** | Output compression guidance |
-| **context-mode** | Tool-context control |
-| **Open Code Review** | Automated code review |
+| **context-mode** | Tool-context control (peer MCP) |
+| **Open Code Review** | Automated code review (`ocr`) |
 | **OWASP SCP / Top 10** | Security knowledge references |
-| **Semgrep** | Static security scanning |
+| **Semgrep / CodeQL** | Static security scanning |
+| **Von** | Decision routing (`decide_tools`) |
+| **Reticle** | Runtime UI verification (peer MCP) |
 
-Each degrades gracefully with an install hint if its CLI isn't found — nothing breaks if you skip a provider you don't need.
+Each degrades gracefully if a CLI is missing — re-run `install.ps1` to retry.
 
 ---
 
@@ -194,7 +200,19 @@ Run the health check any time with:
 
 ```powershell
 npm run doctor
+# or after install: acs-doctor
 ```
+
+### Optional: Graphify
+
+Included in `install.ps1`. Manual fallback only if needed:
+
+```powershell
+winget install astral-sh.uv
+uv tool install graphifyy
+```
+
+Canonical structure store: `graphify-out/graph.json`. Empty graph → `graph_index` (or auto-ensure on query).
 
 ---
 
@@ -203,15 +221,6 @@ npm run doctor
 - [Connect your editor](docs/CONNECT-EDITORS.md)
 - [Full architecture reference](docs/ARCHITECTURE.md)
 - [Provider details](docs/PROVIDERS.md)
-
-### Optional: Graphify
-
-```powershell
-winget install astral-sh.uv
-uv tool install graphifyy
-```
-
-Then use the `graph_index` / `graph_query` MCP tools.
 
 ---
 

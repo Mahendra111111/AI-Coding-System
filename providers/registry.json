@@ -3,42 +3,42 @@
     {
       "id": "graphify",
       "role": "code-structure",
-      "install": "uv tool install graphifyy",
+      "install": "install.ps1 (uv tool install graphifyy)",
       "cli": "graphify",
       "checkout": null
     },
     {
       "id": "claude-mem",
       "role": "historical-memory",
-      "install": "npx claude-mem install --provider host",
+      "install": "install.ps1 soft-attempts: npx claude-mem install --provider host",
       "cli": null,
       "checkout": null
     },
     {
       "id": "ponytail",
       "role": "implementation-discipline",
-      "install": "git clone --depth 1 https://github.com/DietrichGebert/ponytail.git providers/skills/ponytail",
+      "install": "install.ps1 shallow clone providers/skills/ponytail",
       "cli": null,
       "checkout": "providers/skills/ponytail"
     },
     {
       "id": "caveman",
       "role": "output-compression",
-      "install": "git clone --depth 1 https://github.com/JuliusBrussee/caveman.git providers/skills/caveman",
+      "install": "install.ps1 shallow clone providers/skills/caveman",
       "cli": null,
       "checkout": "providers/skills/caveman"
     },
     {
       "id": "context-mode",
       "role": "tool-context-control",
-      "install": "npm install -g context-mode",
+      "install": "install.ps1: npm install -g context-mode + peer MCP merge",
       "cli": "context-mode",
       "checkout": null
     },
     {
       "id": "open-code-review",
       "role": "code-review",
-      "install": "npm install -g @alibaba-group/open-code-review",
+      "install": "install.ps1: npm install -g @alibaba-group/open-code-review",
       "cli": "ocr",
       "checkout": null
     },
@@ -52,28 +52,28 @@
     {
       "id": "owasp-scp",
       "role": "security-knowledge",
-      "install": "git clone --depth 1 https://github.com/OWASP/secure-coding-practices-quick-reference-guide.git providers/refs/owasp-scp",
+      "install": "install.ps1 shallow clone providers/refs/owasp-scp",
       "cli": null,
       "checkout": "providers/refs/owasp-scp"
     },
     {
       "id": "owasp-top10",
       "role": "security-knowledge",
-      "install": "git clone --depth 1 https://github.com/OWASP/Top10.git providers/refs/owasp-top10",
+      "install": "install.ps1 shallow clone providers/refs/owasp-top10",
       "cli": null,
       "checkout": "providers/refs/owasp-top10"
     },
     {
       "id": "semgrep",
       "role": "fast-security",
-      "install": "pip install semgrep",
+      "install": "install.ps1: pip install semgrep (skip with -SkipHeavy)",
       "cli": "semgrep",
       "checkout": null
     },
     {
       "id": "codeql",
       "role": "deep-security",
-      "install": "Download codeql-win64.zip to tools/codeql (see docs/PROVIDERS.md)",
+      "install": "install.ps1 soft-download to tools/codeql (skip with -SkipHeavy)",
       "cli": "codeql",
       "checkout": null
     },
@@ -94,21 +94,21 @@
     {
       "id": "von",
       "role": "decision-routing",
-      "install": "pip install git+https://github.com/wfzyx/von.git then: von serve --model von-1.1 --port 8000",
-      "cli": null,
+      "install": "install.ps1: pip install git+https://github.com/wfzyx/von.git (skip with -SkipVon)",
+      "cli": "von",
       "checkout": null
     },
     {
       "id": "reticle",
       "role": "runtime-verification",
-      "install": "npm install -g @reticlehq/server; npx @reticlehq/server setup mcp; per app: npx @reticlehq/server init",
+      "install": "install.ps1: npm i -g @reticlehq/server + setup mcp + peer MCP merge",
       "cli": null,
       "checkout": null
     },
     {
       "id": "next-seo",
       "role": "seo",
-      "install": "In each Next.js app: npm install next-seo (https://github.com/garmeeh/next-seo). ACS skill: skills/next-seo",
+      "install": "In each Next.js app: npm install next-seo. ACS skill: skills/next-seo",
       "cli": null,
       "checkout": "skills/next-seo"
     }

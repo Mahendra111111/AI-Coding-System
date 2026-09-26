@@ -4,16 +4,11 @@ This folder is the **canonical** Cursor rule set for AI Coding System. Anyone wh
 
 | File | Purpose |
 |------|---------|
-| [rules/ai-coding-system-mcp.mdc](rules/ai-coding-system-mcp.mdc) | Always-on ACS MCP workflow (token savings, Von, SEO, Reticle, Caveman) |
+| [rules/ai-coding-system-mcp.mdc](rules/ai-coding-system-mcp.mdc) | Always-on ACS workflow (one-command install, Graphify JSON SoT, Von, SEO, Reticle, Caveman) |
+| [rules/seo-engine.mdc](rules/seo-engine.mdc) | Always-on ACS SEO Engine (people-first / intent / next-seo; no ranking promises) |
 
 ## For installers / other machines
 
 1. Open this repository (or a workspace that includes these rules) in Cursor — project rules under `.cursor/rules/` apply automatically when `alwaysApply: true`.
-2. Ensure MCP `ai-coding-system` points at `dist/index.js` (see [docs/CONNECT-EDITORS.md](../docs/CONNECT-EDITORS.md) or run `install.ps1`).
-3. Optional user-global copy (every workspace on the machine):
-
-```powershell
-Copy-Item -Force ".\.cursor\rules\ai-coding-system-mcp.mdc" "$env:USERPROFILE\.cursor\rules\ai-coding-system-mcp.mdc"
-```
-
-Do not diverge `examples/cursor-rule.mdc` from this folder — keep [examples/cursor-rule.mdc](../examples/cursor-rule.mdc) as a short pointer only.
+2. Run **one** installer: `powershell -ExecutionPolicy Bypass -File .\install.ps1` (CLI + providers + MCP + rules).
+3. Optional user-global rule copy is also done by `install.ps1`.

@@ -2,6 +2,7 @@ import type { SystemConfig } from "../core/config.js";
 import { buildProjectContext } from "../context/buildContext.js";
 import { getGitSummary } from "../git/summary.js";
 import {
+  ensureGraphIndexed,
   graphQuery,
   isGraphifyAvailable,
 } from "../graph/graphify.js";
@@ -130,7 +131,12 @@ export async function prepareContext(
     isGraphifyAvailable()
   ) {
     try {
-      graph = graphQuery(args.workspacePath, truncate(args.task, 500));
+      const ensured = ensureGraphIndexed(
+        args.workspacePath,
+        config.graphify.preferCodeOnly,
+      );
+      const answer = graphQuery(args.workspacePath, truncate(args.task, 500));
+      graph = ensured.ranExtract ? `${ensured.detail}\n${answer}` : answer;
     } catch (error) {
       graph = `Graphify query failed: ${error instanceof Error ? error.message : String(error)}`;
     }

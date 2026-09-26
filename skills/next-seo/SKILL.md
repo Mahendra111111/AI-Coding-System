@@ -1,64 +1,66 @@
 ---
 name: next-seo
 description: >-
-  When adding or changing Next.js website content/pages, install next-seo and
-  wire SEO (metadata + JSON-LD) in the same change using the user's keywords —
-  never ship pages as an SEO afterthought.
+  ACS SEO Engine for Next.js: people-first, intent-driven content + next-seo
+  technical SEO. Call seo_guidance; follow skills/next-seo/SEO-ENGINE.md. Ship
+  metadata + JSON-LD with content — never as an afterthought. No ranking promises.
 ---
 
-# Next SEO (target app dependency)
+# Next SEO + ACS SEO Engine
 
-[next-seo](https://github.com/garmeeh/next-seo) lives in the **Next.js app**
-(`npm install next-seo` there). ACS does not bundle it. Agents must apply SEO
-**while creating content**, using keywords the user provides.
+You are operating under the **ACS SEO Engine**
+([SEO-ENGINE.md](./SEO-ENGINE.md)).
 
-## Rule
+[next-seo](https://github.com/garmeeh/next-seo) installs in the **Next.js app**
+(`npm install next-seo`). ACS does not bundle it.
 
-If you add a page, section, blog post, product, FAQ, or marketing copy → also add:
+## Non-negotiables
 
-1. Next.js App Router `generateMetadata` / `metadata` (title, description, openGraph, keywords)
-2. Matching `next-seo` JSON-LD for the content type
-
-Do **not** leave SEO for a follow-up PR unless the user explicitly says so.
+1. Follow [SEO-ENGINE.md](./SEO-ENGINE.md) for every page/landing/blog/product/service/category piece of content.
+2. People-first + search intent first — not keyword density games.
+3. Final copy must be human-reviewed; never fabricate experience, stats, or credentials.
+4. Ship `generateMetadata` + next-seo JSON-LD **in the same change** as content.
+5. Never promise #1 rankings, guaranteed traffic, or guaranteed indexing.
 
 ## When to use
 
-- Building or editing a Next.js site (App Router preferred)
-- User supplies keywords / target queries / brand phrases
-- ACS `decide_tools` recommends `seo` / `seo_guidance`
+- Any Next.js site content or page work
+- User supplies keywords / audience / intent (ask once if missing)
+- ACS `decide_tools` → `seo` / `seo_guidance`
 
 ## Setup (once per app)
 
 ```bash
 npm install next-seo
-# or: pnpm add next-seo / yarn add next-seo
 ```
 
-Pages Router: import from `next-seo/pages` (see upstream docs).
+Pages Router: import from `next-seo/pages`.
 
-## Workflow (keywords → SEO + content)
+## Workflow
 
-1. Collect keywords from the user (primary + secondary). If missing, ask once.
-2. Call ACS `seo_guidance` with `keywords`, `workspacePath`, and `pageType`.
-3. Ensure `next-seo` is in the app `package.json`; install if missing.
-4. Implement the page **and** SEO in one pass:
-   - `generateMetadata`: title/description/keywords/OG using the keyword set
-   - JSON-LD: pick the component that matches the page (see map below)
-5. Align H1/H2 and body copy with keywords without stuffing.
-6. Optional: Reticle-verify the live page after SEO + content land.
+1. Identify audience, intent, primary + secondary keywords, semantic map (SEO-ENGINE §4–7, §27).
+2. Call ACS `seo_guidance` with `keywords`, `workspacePath`, `pageType`.
+3. Ensure `next-seo` is installed in the app.
+4. Create unique outline + original value (not competitor rewrites).
+5. Implement content **and** SEO together:
+   - `generateMetadata` (title ~580px preference, description ~920px preference, OG, keywords)
+   - Matching JSON-LD via next-seo
+   - Logical H1/H2, internal links, image alt, canonical-friendly URL
+6. Run pre-publish audit (SEO-ENGINE §29).
+7. Optional: Reticle-verify the live page.
 
-## Page type → next-seo component
+## Page type → next-seo
 
 | Page type | Prefer |
 |-----------|--------|
 | Blog / news / article | `ArticleJsonLd` |
-| Company / brand home | `OrganizationJsonLd` (+ site `WebSite` metadata) |
+| Company / brand | `OrganizationJsonLd` |
 | Product / service | `ProductJsonLd` |
 | FAQ | `FAQJsonLd` |
 | Tutorial / steps | `HowToJsonLd` |
-| Generic marketing | `generateMetadata` + `OrganizationJsonLd` or `WebPage` patterns as needed |
+| Generic marketing | `generateMetadata` + Organization / WebSite as appropriate |
 
-Meta title/description: use Next.js [`generateMetadata`](https://nextjs.org/docs/app/api-reference/functions/generate-metadata). next-seo focuses on **JSON-LD** in App Router.
+Meta tags: Next.js `generateMetadata`. JSON-LD: next-seo.
 
 ## Minimal App Router pattern
 
@@ -68,12 +70,12 @@ import { ArticleJsonLd } from "next-seo";
 
 export function generateMetadata(): Metadata {
   return {
-    title: "Primary Keyword | Brand",
-    description: "One clear sentence with secondary keywords.",
-    keywords: ["primary keyword", "secondary", "brand"],
+    title: "Clear topic | Brand",
+    description: "Accurate, useful summary matching search intent.",
+    keywords: ["primary topic", "related term"],
     openGraph: {
-      title: "Primary Keyword | Brand",
-      description: "One clear sentence with secondary keywords.",
+      title: "Clear topic | Brand",
+      description: "Accurate, useful summary matching search intent.",
       type: "article",
     },
   };
@@ -83,13 +85,13 @@ export default function Page() {
   return (
     <>
       <ArticleJsonLd
-        headline="Primary Keyword | Brand"
+        headline="Clear topic | Brand"
         datePublished="2026-01-01T08:00:00+00:00"
         author="Brand"
-        description="One clear sentence with secondary keywords."
+        description="Accurate, useful summary matching search intent."
         image="https://example.com/og.jpg"
       />
-      {/* page content */}
+      {/* Human-reviewed, intent-satisfying content */}
     </>
   );
 }
@@ -97,13 +99,14 @@ export default function Page() {
 
 ## MCP tools
 
-- ACS: `seo_guidance`, `decide_tools`, `list_acs_skills`
-- Target app: `next-seo` package (not an ACS MCP server)
+- `seo_guidance` — loads SEO Engine + keywords + page-type hints
+- `decide_tools` — may route to `seo_guidance`
+- Target app: `next-seo` package
 
 ## Output checklist
 
-- [ ] `next-seo` installed in the app
-- [ ] Keywords reflected in title, description, and headings
-- [ ] JSON-LD component matches page type
-- [ ] OG fields set for share previews
-- [ ] No SEO-only follow-up left for “later”
+- [ ] SEO-ENGINE research + pre-publish audit completed
+- [ ] `next-seo` installed; metadata + JSON-LD shipped with content
+- [ ] Intent satisfied; natural keywords; no stuffing
+- [ ] Human review planned/done; no fabricated claims
+- [ ] No ranking promises in copy or commits

@@ -1,5 +1,5 @@
 ---
-description: ACS workflow — project brain, token savings, Von decide_tools, SEO-first, Reticle, Context Mode, Caveman
+description: ACS workflow — one-command install, project brain, Graphify JSON SoT, Von, SEO, Reticle, Context Mode, Caveman
 alwaysApply: true
 ---
 
@@ -9,21 +9,40 @@ Use the **`ai-coding-system`** / **`user-ai-coding-system`** MCP on every worksp
 
 Never ask the user to re-explain architecture, decisions, or handoff available via MCP. Never paste full repos, full files, or giant logs into prompts.
 
+## One-command setup (mandatory when anything is missing)
+
+If ACS, the ACS CLI (`ai-coding-mcp` / `acs-doctor`), Graphify, Caveman, Ponytail, Von, Semgrep, Context Mode, Reticle, or other providers are missing or incomplete:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File C:\AI-Coding-System\install.ps1
+```
+
+That **one** command installs ACS build + CLI on PATH + full-potential providers/CLIs + Cursor rules/MCP peers. Do **not** invent separate chat prompts to clone Caveman, install Graphify, pip-install Von, or set up peers one-by-one. If `doctor` / `provider_status` reports gaps → re-run the same `install.ps1` only.
+
 ## Session start (mandatory)
 
 1. `register_project` (first time) or `get_project_context` with absolute `workspacePath`. Continuing work → `get_handoff` only.
 2. `compression_guidance` — reply terse (Caveman). Keep code, paths, commands, and errors exact.
-3. If Claude-Mem tools fail → tell the user: `npx claude-mem start`.
+3. If Claude-Mem tools fail → tell the user: `npx claude-mem start` (or re-run `install.ps1` if never installed).
 
 ## Per coding task
 
 1. If unsure which ACS tool to call → `decide_tools` (Von), then call **only** the recommended tool (or Reticle / SEO peer flow if recommended).
 2. `prepare_context` with task + acceptance (`includeMemory` / `includeGraph` only if needed; default off).
 3. `discipline_rules` (Ponytail) before writing code — minimum solution only.
-4. Structure/symbols → `graph_index` once if needed, then `graph_query` / `graph_explain` (not full-repo reads).
+4. Structure/symbols → if Graphify index missing, call `graph_index` once (or rely on auto-ensure on `graph_query` / `graph_explain`), then query/explain. **Never** dump repo trees into ad-hoc `.md`, `.sql`, or custom JSON structure files.
 5. Security-touching changes → `security_refs` for the relevant topic only.
 6. Owned running UI verification → after `decide_tools` returns `reticle_verify`, use Reticle peer MCP (`reticle_guidance` checklist). Do not claim UI done without a Reticle verdict.
-7. Next.js pages/content → `seo_guidance` with user keywords; install `next-seo` **in the app** and ship `generateMetadata` + JSON-LD **in the same change** (not later).
+7. Next.js pages/content → call `seo_guidance` with keywords; follow `.cursor/rules/seo-engine.mdc` and `skills/next-seo/SEO-ENGINE.md`. Install `next-seo` in the app; ship people-first content + metadata + JSON-LD together. Never promise rankings.
+
+## Storage sources of truth
+
+| Kind | Canonical store | Not allowed |
+|------|-----------------|-------------|
+| Code structure / symbols | Graphify `graphify-out/graph.json` in the product workspace | Invented `.sql` dumps, free-form structure `.md`, alternate JSON layouts |
+| Agent durable brain | ACS `projects/<id>/context/` markdown (HANDOFF, PROJECT_STATE, DECISIONS, CONSTRAINTS, ARCHITECTURE) | Duplicating the code graph into those files |
+
+Empty Graphify gate: if structure is needed and `graphify-out/graph.json` is missing → index first (`graph_index` / auto-ensure), then continue. Do not proceed with structure work on an empty graph.
 
 ## Token savings (mandatory)
 
@@ -46,6 +65,7 @@ Optional: check `ctx_stats` after heavy Context Mode use.
 ## Source of truth
 
 - Durable state: ACS handoff / project state / decisions / constraints.
+- Code structure: Graphify JSON only.
 - Context Mode = tool-output sandbox (peer MCP). Caveman = terse agent output. Claude-Mem / Graphify = providers via ACS.
 - Von = decision routing (`decide_tools`); with `von.autoStart` ACS can start the local server — do not ask the user to babysit `von serve` unless auto-start fails.
-- If tools missing: `doctor` / `provider_status`. Rebuild ACS (`npm run build`) and reload MCP.
+- If tools missing: `doctor` / `provider_status`, then **only** re-run `install.ps1`. Rebuild ACS (`npm run build`) and reload MCP after source changes.

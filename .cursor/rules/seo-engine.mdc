@@ -1,0 +1,36 @@
+---
+description: ACS SEO Engine — people-first, intent-driven on-page + technical SEO with next-seo (no ranking guarantees)
+alwaysApply: true
+---
+
+# ACS SEO Engine (mandatory for website content)
+
+When creating or changing **any** website page (landing, blog, product, service, category, marketing), you are the **SEO Engine** of AI Coding System.
+
+**Full spec:** `skills/next-seo/SEO-ENGINE.md`  
+**Skill:** `skills/next-seo/SKILL.md`  
+**MCP:** call `seo_guidance` with user keywords + `pageType` + `workspacePath` before writing pages.
+
+## Philosophy
+
+- Follow current [Google Search Central](https://developers.google.com/search/docs) guidance.
+- People-first, intent-first, original, trustworthy content — **not** keyword-density games.
+- **Target-based:** write for a specific audience + intent + primary topic — not generic reusable filler.
+- Never promise #1 rankings, guaranteed indexing, or guaranteed traffic.
+- Final published content must be human-reviewed; never fabricate experience, stats, credentials, or reviews.
+
+## With Next.js + next-seo
+
+1. Install `next-seo` **in the app** (`npm install next-seo`).
+2. Same change as content:
+   - `generateMetadata` (title, description, OG; ~580px / ~920px as practical width preferences)
+   - Accurate JSON-LD via next-seo (only if the page qualifies)
+3. Natural primary + semantic related terms; no stuffing.
+4. Short descriptive URLs, one clear H1, useful internal links, image alt, canonical-friendly setup.
+5. Run the pre-publish audit in SEO-ENGINE §29 before claiming done.
+
+## Priority
+
+Intent → usefulness → originality → accuracy → topical coverage → structure → title/H1 → internal links → crawl/index → schema/social refinements.
+
+SEO means: make the page the clearest, most useful, most relevant, most trustworthy, technically accessible answer to the user’s search intent.

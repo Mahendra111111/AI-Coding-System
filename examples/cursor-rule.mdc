@@ -7,10 +7,10 @@ alwaysApply: false
 
 **Canonical rule (use this):** [`.cursor/rules/ai-coding-system-mcp.mdc`](../.cursor/rules/ai-coding-system-mcp.mdc)
 
-That file ships with the repo so every installer gets the same performance workflow (Von `decide_tools`, SEO-first, Reticle, token discipline, Caveman).
+That file ships with the repo so every installer gets the same workflow: **one-command `install.ps1`** (ACS CLI + providers), Von `decide_tools`, Graphify `graphify-out/graph.json` SoT, SEO-first, Reticle, token discipline, Caveman.
 
-To apply on every Cursor workspace on a machine:
+To apply on every Cursor workspace on a machine (also done by `install.ps1`):
 
 ```powershell
-Copy-Item -Force ".\.cursor\rules\ai-coding-system-mcp.mdc" "$env:USERPROFILE\.cursor\rules\ai-coding-system-mcp.mdc"
+powershell -ExecutionPolicy Bypass -File .\install.ps1
 ```

@@ -6,6 +6,7 @@ const mocks = vi.hoisted(() => ({
   getGitSummary: vi.fn(),
   graphQuery: vi.fn(),
   isGraphifyAvailable: vi.fn(),
+  ensureGraphIndexed: vi.fn(),
   memorySearch: vi.fn(),
   registerProject: vi.fn(),
   securityRefs: vi.fn(),
@@ -20,6 +21,7 @@ vi.mock("../src/git/summary.js", () => ({
 vi.mock("../src/graph/graphify.js", () => ({
   graphQuery: mocks.graphQuery,
   isGraphifyAvailable: mocks.isGraphifyAvailable,
+  ensureGraphIndexed: mocks.ensureGraphIndexed,
 }));
 vi.mock("../src/project/register.js", () => ({
   registerProject: mocks.registerProject,
@@ -87,6 +89,10 @@ beforeEach(() => {
     dirtyFiles: ["src/auth.ts", "tests/auth.test.ts"],
   });
   mocks.isGraphifyAvailable.mockReturnValue(true);
+  mocks.ensureGraphIndexed.mockReturnValue({
+    ranExtract: false,
+    detail: "Graphify index present (graphify-out/graph.json)",
+  });
   mocks.graphQuery.mockReturnValue("AuthService -> SessionStore");
   mocks.memorySearch.mockResolvedValue("Observation 7: prior auth migration");
   mocks.securityRefs.mockReturnValue("Short OWASP auth excerpt");

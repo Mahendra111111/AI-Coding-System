@@ -31,6 +31,16 @@ function parseKeywords(raw?: string): string[] {
     .filter(Boolean);
 }
 
+function readSkillFile(config: SystemConfig, name: string): string | null {
+  const path = join(skillsDir(config), "next-seo", name);
+  if (!existsSync(path)) return null;
+  try {
+    return readFileSync(path, "utf8");
+  } catch {
+    return null;
+  }
+}
+
 export function probeNextSeo(
   workspacePath?: string,
 ): { available: boolean; detail: string } {
@@ -87,32 +97,41 @@ export function getSeoGuidance(
   const keywords = parseKeywords(args.keywords);
   const pageType: SeoPageType = args.pageType ?? "website";
   const probe = probeNextSeo(args.workspacePath);
-  const skillPath = join(skillsDir(config), "next-seo", "SKILL.md");
+  const skillDir = join(skillsDir(config), "next-seo");
 
   const lines = [
-    "SEO-first content workflow (next-seo in the target Next.js app).",
-    `Upstream: ${NEXT_SEO_REPO}`,
+    "ACS SEO ENGINE — people-first, search-intent-driven SEO (not ranking guarantees).",
+    `Authority: Google Search Central current guidance. Full spec: ${join(skillDir, "SEO-ENGINE.md")}`,
+    `next-seo library: ${NEXT_SEO_REPO}`,
     `Status: ${probe.available ? "installed" : "missing"} — ${probe.detail}`,
     `Page type: ${pageType} — ${PAGE_TYPE_HINT[pageType]}`,
     "",
-    "Default rule: when adding website content, ship metadata + JSON-LD in the same change.",
+    "Never promise #1 rankings, guaranteed indexing, or guaranteed traffic.",
+    "Final content must be human-reviewed; never fabricate experience, stats, or credentials.",
+    "Ship generateMetadata + next-seo JSON-LD in the SAME change as content.",
+    "Keyword density is diagnostic only — never optimize to a fixed %.",
+    "TOPICAL COVERAGE > EXACT-MATCH REPETITION.",
     "",
   ];
 
   if (keywords.length > 0) {
-    lines.push("Keywords to weave into title, description, headings, and JSON-LD:");
+    lines.push(
+      "User keywords (primary first — use naturally; build a semantic map around them):",
+    );
     for (const keyword of keywords) {
       lines.push(`- ${keyword}`);
     }
     lines.push("");
     lines.push(
-      `Suggested title pattern: "${keywords[0]} | <Brand>"`,
-      `Suggested description: one sentence including "${keywords.slice(0, 3).join(", ")}" without stuffing.`,
+      `Primary topic candidate: "${keywords[0]}"`,
+      "Before writing: confirm audience + intent; draft unique outline; identify content gaps vs competitors (do not copy).",
+      `Meta title preference: clear topic + brand (~580px practical width). Example: "${keywords[0]} | <Brand>"`,
+      `Meta description: accurate intent match (~920px practical width); include topic once naturally.`,
       "",
     );
   } else {
     lines.push(
-      "No keywords supplied. Ask the user for primary + secondary keywords before writing page copy.",
+      "No keywords supplied. Ask once for: audience, primary intent, primary keyword, secondary keywords.",
       "",
     );
   }
@@ -121,23 +140,27 @@ export function getSeoGuidance(
     "Install (in the app workspace, not ACS):",
     `  ${NEXT_SEO_INSTALL}`,
     "",
-    "Same-change checklist:",
-    "1. generateMetadata / metadata (title, description, keywords, openGraph)",
-    "2. next-seo JSON-LD for the page type",
-    "3. H1/H2 aligned with keywords",
-    "4. Do not defer SEO to a later task",
+    "Same-change technical checklist:",
+    "1. generateMetadata (title, description, keywords, openGraph / Twitter)",
+    "2. next-seo JSON-LD only if the page genuinely qualifies",
+    "3. One clear H1; logical H2/H3; descriptive URL",
+    "4. Useful internal links; image alt (not keyword lists)",
+    "5. Pre-publish audit (SEO-ENGINE §29)",
     "",
   );
 
-  if (existsSync(skillPath)) {
-    try {
-      lines.push(readFileSync(skillPath, "utf8"));
-      return lines.join("\n");
-    } catch {
-      // fall through
-    }
+  const skill = readSkillFile(config, "SKILL.md");
+  const engine = readSkillFile(config, "SEO-ENGINE.md");
+
+  if (skill) {
+    lines.push("--- SKILL ---", "", skill, "");
+  }
+  if (engine) {
+    lines.push("--- SEO ENGINE (full) ---", "", engine);
+  }
+  if (!skill && !engine) {
+    lines.push(`Skill files missing under ${skillDir}. See docs/PROVIDERS.md.`);
   }
 
-  lines.push(`Skill file missing at ${skillPath}. See docs/PROVIDERS.md.`);
   return lines.join("\n");
 }
